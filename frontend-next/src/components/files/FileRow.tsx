@@ -1,8 +1,12 @@
+import { useRef, useCallback } from "react";
 import type { FileInfo } from "@/lib/api/resources";
 import { getDownloadURL } from "@/lib/api/resources";
 import { useFileStore } from "@/lib/stores/file-store";
 import { TableRow, TableCell } from "@/components/ui/table";
 import FileIcon from "./FileIcon";
+import { isPreviewable } from "@/lib/utils/preview";
+
+const CLICK_DELAY = 250; // ms
 
 function formatSize(bytes: number): string {
   if (bytes === 0) return "\u2014";
@@ -36,29 +40,81 @@ interface FileRowProps {
 }
 
 export default function FileRow({ item, onNavigate }: FileRowProps) {
-  const { selected, toggleSelect, source } = useFileStore();
+  const { selected, toggleSelect, source, setPreviewFile } = useFileStore();
+  const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isSelected = selected.has(item.name);
   const isDir = item.type === "directory";
 
-  const handleClick = (e: React.MouseEvent) => {
-    if (e.ctrlKey || e.metaKey) {
-      toggleSelect(item.name);
-      return;
-    }
-    if (isDir) {
-      onNavigate(item.path);
-    } else {
-      window.open(getDownloadURL(source, item.path), "_blank");
-    }
-  };
+  const downloadFile = useCallback(() => {
+    window.open(getDownloadURL(source, item.source ?? source, item.path), "_blank");
+  }, [source, item]);
+
+  const handleClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (e.ctrlKey || e.metaKey) {
+        toggleSelect(item.name);
+        return;
+      }
+
+      if (isDir) {
+        if (clickTimer.current) {
+          clearTimeout(clickTimer.current);
+          clickTimer.current = null;
+        }
+        onNavigate(item.path);
+        return;
+      }
+
+      // Non-previewable: download immediately
+      if (!isPreviewable(item.type)) {
+        if (clickTimer.current) {
+          clearTimeout(clickTimer.current);
+          clickTimer.current = null;
+        }
+        downloadFile();
+        return;
+      }
+
+      // Previewable: debounce to detect double-click
+      if (clickTimer.current) {
+        clearTimeout(clickTimer.current);
+        clickTimer.current = null;
+        downloadFile();
+      } else {
+        clickTimer.current = setTimeout(() => {
+          clickTimer.current = null;
+          setPreviewFile(item);
+        }, CLICK_DELAY);
+      }
+    },
+    [isDir, item, onNavigate, toggleSelect, setPreviewFile, downloadFile, source]
+  );
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        if (e.shiftKey || !isPreviewable(item.type)) {
+          downloadFile();
+        } else {
+          setPreviewFile(item);
+        }
+      }
+    },
+    [item, setPreviewFile, downloadFile]
+  );
 
   return (
     <TableRow
       onClick={handleClick}
-      className="cursor-pointer"
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      role="button"
+      aria-label={`${item.name}${isDir ? " (folder)" : ""}`}
+      className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       data-state={isSelected ? "selected" : undefined}
       style={{
-        background: isSelected ? "var(--primary-alpha)" : undefined,
+        background: isSelected ? "var(--accent)" : undefined,
       }}
     >
       <TableCell className="w-10">
@@ -67,25 +123,22 @@ export default function FileRow({ item, onNavigate }: FileRowProps) {
           checked={isSelected}
           onChange={() => toggleSelect(item.name)}
           onClick={(e) => e.stopPropagation()}
-          className="w-3.5 h-3.5 accent-[var(--primary)] cursor-pointer"
+          className="w-3.5 h-3.5 accent-foreground cursor-pointer"
         />
       </TableCell>
       <TableCell className="w-10">
         <FileIcon type={item.type} size={16} />
       </TableCell>
-      <TableCell
-        className="font-medium"
-        style={{ color: "var(--text-primary)" }}
-      >
+      <TableCell className="font-medium text-foreground">
         {item.name}
       </TableCell>
-      <TableCell style={{ color: "var(--text-secondary)" }}>
+      <TableCell className="text-muted-foreground">
         {isDir ? "\u2014" : formatSize(item.size)}
       </TableCell>
-      <TableCell style={{ color: "var(--text-secondary)" }}>
+      <TableCell className="text-muted-foreground">
         {formatDate(item.modified)}
       </TableCell>
-      <TableCell style={{ color: "var(--text-secondary)" }}>
+      <TableCell className="text-muted-foreground">
         {formatType(item.type)}
       </TableCell>
     </TableRow>

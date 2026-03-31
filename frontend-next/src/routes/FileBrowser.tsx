@@ -12,6 +12,7 @@ import CreateFolderDialog from "@/components/dialogs/CreateFolderDialog";
 import RenameDialog from "@/components/dialogs/RenameDialog";
 import DeleteDialog from "@/components/dialogs/DeleteDialog";
 import MoveCopyDialog from "@/components/dialogs/MoveCopyDialog";
+import PreviewModal from "@/components/dialogs/PreviewModal";
 
 export default function FileBrowser() {
   const navigate = useNavigate();
@@ -51,8 +52,7 @@ export default function FileBrowser() {
 
   return (
     <div
-      className="flex h-screen overflow-hidden"
-      style={{ background: "var(--surface-0)" }}
+      className="flex h-screen overflow-hidden bg-background"
     >
       <Sidebar onNavigate={handleNavigate} />
 
@@ -66,8 +66,7 @@ export default function FileBrowser() {
         <main className="flex-1 overflow-auto p-4">
           {loading ? (
             <div
-              className="flex items-center justify-center h-full"
-              style={{ color: "var(--text-secondary)" }}
+              className="flex items-center justify-center h-full text-muted-foreground"
             >
               Loading…
             </div>
@@ -109,6 +108,7 @@ export default function FileBrowser() {
         onClose={closeDialog}
         items={selectedItems}
       />
+      <PreviewModal />
     </div>
   );
 }
