@@ -28,6 +28,16 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const { user } = useAuthStore();
+
+  useEffect(() => {
+    const darkMode = user?.darkMode;
+    const isDark =
+      darkMode === true ||
+      (darkMode === null && window.matchMedia("(prefers-color-scheme: dark)").matches);
+    document.documentElement.classList.toggle("dark", isDark);
+  }, [user?.darkMode]);
+
   return (
     <>
       <Routes>
