@@ -20,7 +20,7 @@ export default function FileGrid({ items, onNavigate }: FileGridProps) {
 
   return (
     <div
-      className="grid gap-1"
+      className="grid gap-4"
       style={{
         gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
       }}

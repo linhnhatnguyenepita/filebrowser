@@ -111,13 +111,13 @@ export default function FileRow({ item, onNavigate }: FileRowProps) {
       tabIndex={0}
       role="button"
       aria-label={`${item.name}${isDir ? " (folder)" : ""}`}
-      className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring mb-2"
+      className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring mb-10"
       data-state={isSelected ? "selected" : undefined}
       style={{
         background: isSelected ? "var(--accent)" : undefined,
       }}
     >
-      <TableCell className="w-10">
+      <TableCell className="w-10 py-4 border-b">
         <input
           type="checkbox"
           checked={isSelected}
@@ -126,19 +126,19 @@ export default function FileRow({ item, onNavigate }: FileRowProps) {
           className="w-3.5 h-3.5 accent-foreground cursor-pointer"
         />
       </TableCell>
-      <TableCell className="w-10 pr-2">
+      <TableCell className="w-10 pr-2 border-b">
         <FileIcon type={item.type} size={16} />
       </TableCell>
-      <TableCell className="font-medium text-foreground min-w-0 truncate">
+      <TableCell className="font-medium text-foreground min-w-0 truncate border-b">
         {item.name}
       </TableCell>
-      <TableCell className="w-24 text-muted-foreground">
+      <TableCell className="w-24 text-muted-foreground border-b">
         {isDir ? "\u2014" : formatSize(item.size)}
       </TableCell>
-      <TableCell className="w-44 text-muted-foreground">
+      <TableCell className="w-44 text-muted-foreground border-b">
         {formatDate(item.modified)}
       </TableCell>
-      <TableCell className="w-24 text-muted-foreground">
+      <TableCell className="w-24 text-muted-foreground border-b">
         {formatType(item.type)}
       </TableCell>
     </TableRow>

@@ -97,12 +97,9 @@ export default function FileCard({ item, onNavigate }: FileCardProps) {
       tabIndex={0}
       role="button"
       aria-label={`${item.name}${isDir ? " (folder)" : ""}`}
-      className="group relative flex items-center gap-4 rounded-lg p-3 cursor-pointer transition-colors hover:bg-[var(--secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="border border-black/10 group relative flex items-center gap-4 rounded-lg py-4 px-3 cursor-pointer transition-colors hover:bg-[var(--secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       style={{
         background: isSelected ? "var(--accent)" : hovered ? "var(--secondary)" : "transparent",
-        border: isSelected
-          ? "1px solid var(--border)"
-          : "1px solid transparent",
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}

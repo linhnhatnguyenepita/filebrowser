@@ -197,7 +197,7 @@ export default function SettingsPanel() {
       </PreferenceSection>
 
       <div className="space-y-1.5">
-        <Button onClick={handleSave} disabled={!isDirty || saving} className="w-full" size="sm">
+        <Button onClick={handleSave} disabled={!isDirty || saving} className="w-full" size="lg">
           {saving ? "Saving…" : "Save"}
         </Button>
         {saveError && (
