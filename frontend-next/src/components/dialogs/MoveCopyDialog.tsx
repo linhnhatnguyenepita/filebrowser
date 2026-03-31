@@ -172,8 +172,7 @@ export default function MoveCopyDialog({
 
         {/* Directory picker */}
         <div
-          className="max-h-60 overflow-auto rounded-lg border p-2"
-          style={{ borderColor: "var(--border)" }}
+          className="max-h-60 overflow-auto rounded-lg border p-2 border-border"
         >
           <PickerNodeItem
             node={root}
@@ -231,11 +230,11 @@ function PickerNodeItem({
   return (
     <div>
       <div
-        className="flex items-center gap-1 rounded cursor-pointer select-none text-sm py-1 px-1 transition-colors"
+        className="flex items-center gap-1 rounded cursor-pointer select-none text-sm py-1 px-1 transition-colors hover:bg-accent"
         style={{
           paddingLeft: `${depth * 12 + 4}px`,
-          background: isSelected ? "var(--surface-3)" : "transparent",
-          color: isSelected ? "var(--text-primary)" : "var(--text-secondary)",
+          background: isSelected ? "var(--accent)" : "transparent",
+          color: isSelected ? "var(--foreground)" : "var(--muted-foreground)",
         }}
         onClick={() => onSelect(node.path)}
       >
@@ -260,7 +259,7 @@ function PickerNodeItem({
             <ChevronRight size={12} />
           )}
         </span>
-        <span style={{ color: "var(--primary)" }}>
+        <span>
           {node.isExpanded ? <FolderOpen size={14} /> : <Folder size={14} />}
         </span>
         <span className="truncate ml-1">

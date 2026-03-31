@@ -59,3 +59,5 @@ backend/custom.css
 backend/preview/heic/
 backend/preview/thumbnails/
 .superpowers/
+.cursor/
+.agent/

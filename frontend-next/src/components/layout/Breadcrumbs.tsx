@@ -23,23 +23,10 @@ export default function Breadcrumbs({ path, onNavigate }: BreadcrumbsProps) {
       {/* Root / Home */}
       <button
         onClick={() => onNavigate("/")}
-        className="flex items-center gap-1 px-1.5 py-1 rounded transition-colors shrink-0"
+        className="flex items-center gap-1 px-1.5 py-1 rounded transition-colors shrink-0 hover:bg-accent"
         style={{
-          color:
-            segments.length === 0
-              ? "var(--text-primary)"
-              : "var(--text-secondary)",
+          color: segments.length === 0 ? "var(--foreground)" : "var(--muted-foreground)",
         }}
-        onMouseEnter={(e) =>
-          ((e.currentTarget as HTMLButtonElement).style.color =
-            "var(--text-primary)")
-        }
-        onMouseLeave={(e) =>
-          ((e.currentTarget as HTMLButtonElement).style.color =
-            segments.length === 0
-              ? "var(--text-primary)"
-              : "var(--text-secondary)")
-        }
         aria-label="Home"
         title="Home"
       >
@@ -52,25 +39,16 @@ export default function Breadcrumbs({ path, onNavigate }: BreadcrumbsProps) {
           <span key={crumb.path} className="flex items-center gap-1 min-w-0">
             <ChevronRight
               size={13}
-              className="shrink-0"
-              style={{ color: "var(--text-secondary)", opacity: 0.5 }}
+              className="shrink-0 text-muted-foreground"
+              style={{ opacity: 0.5 }}
             />
             <button
               onClick={() => onNavigate(crumb.path)}
-              className="px-1 py-0.5 rounded transition-colors truncate max-w-[180px]"
+              className="px-1 py-0.5 rounded transition-colors truncate max-w-[180px] hover:bg-accent"
               style={{
-                color: isLast ? "var(--text-primary)" : "var(--text-secondary)",
+                color: isLast ? "var(--foreground)" : "var(--muted-foreground)",
                 fontWeight: isLast ? 500 : 400,
               }}
-              onMouseEnter={(e) =>
-                ((e.currentTarget as HTMLButtonElement).style.color =
-                  "var(--text-primary)")
-              }
-              onMouseLeave={(e) =>
-                ((e.currentTarget as HTMLButtonElement).style.color = isLast
-                  ? "var(--text-primary)"
-                  : "var(--text-secondary)")
-              }
               title={crumb.label}
             >
               {crumb.label}

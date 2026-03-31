@@ -161,11 +161,7 @@ export default function UploadDialog({ open, onClose }: UploadDialogProps) {
 
         {/* Drop zone */}
         <div
-          className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 text-sm transition-colors"
-          style={{
-            borderColor: "var(--border)",
-            color: "var(--text-secondary)",
-          }}
+          className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 text-sm transition-colors border-border text-muted-foreground"
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
@@ -207,15 +203,11 @@ export default function UploadDialog({ open, onClose }: UploadDialogProps) {
                   {/* Progress bar */}
                   {upload.status === "uploading" && (
                     <div
-                      className="mt-1 h-1 w-full rounded-full overflow-hidden"
-                      style={{ background: "var(--surface-3)" }}
+                      className="mt-1 h-1 w-full rounded-full overflow-hidden bg-muted"
                     >
                       <div
-                        className="h-full rounded-full transition-all"
-                        style={{
-                          width: `${upload.progress}%`,
-                          background: "var(--primary)",
-                        }}
+                        className="h-full rounded-full transition-all bg-foreground"
+                        style={{ width: `${upload.progress}%` }}
                       />
                     </div>
                   )}

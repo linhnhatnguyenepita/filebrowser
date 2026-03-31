@@ -31,21 +31,14 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center"
-         style={{ background: "linear-gradient(135deg, var(--surface-0), var(--surface-2))" }}>
+    <div className="min-h-screen flex items-center justify-center bg-background">
       <form onSubmit={handleSubmit}
-            className="w-full max-w-sm p-8 rounded-xl space-y-6"
-            style={{
-              background: "rgba(6, 18, 45, 0.6)",
-              backdropFilter: "blur(20px)",
-              border: "1px solid var(--border)",
-              boxShadow: "0 24px 48px rgba(0,0,0,0.4)",
-            }}>
-        <h1 className="text-2xl font-semibold text-center" style={{ color: "var(--text-primary)" }}>
+            className="w-full max-w-sm p-8 rounded-xl space-y-6 bg-card border border-border shadow-lg">
+        <h1 className="text-2xl font-semibold text-center text-card-foreground">
           Sign In
         </h1>
         {error && (
-          <div className="p-3 rounded-lg text-sm" style={{ background: "rgba(238,125,119,0.15)", color: "var(--error)" }}>
+          <div className="p-3 rounded-lg text-sm bg-destructive/10 text-destructive">
             {error}
           </div>
         )}
@@ -57,12 +50,7 @@ export default function Login() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             autoFocus
-            className="w-full px-4 py-3 rounded-lg text-sm outline-none transition-all"
-            style={{
-              background: "var(--surface-3)",
-              color: "var(--text-primary)",
-              border: "1px solid transparent",
-            }}
+            className="w-full px-4 py-3 rounded-lg text-sm outline-none transition-all bg-input text-foreground border border-transparent"
           />
           <input
             id="login-password"
@@ -70,23 +58,14 @@ export default function Login() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg text-sm outline-none transition-all"
-            style={{
-              background: "var(--surface-3)",
-              color: "var(--text-primary)",
-              border: "1px solid transparent",
-            }}
+            className="w-full px-4 py-3 rounded-lg text-sm outline-none transition-all bg-input text-foreground border border-transparent"
           />
         </div>
         <button
           id="login-submit"
           type="submit"
           disabled={loading || !username}
-          className="w-full py-3 rounded-full font-bold text-sm transition-all disabled:opacity-45 disabled:cursor-not-allowed"
-          style={{
-            background: "linear-gradient(135deg, var(--primary), var(--primary-container))",
-            color: "#004560",
-          }}
+          className="w-full py-3 rounded-full font-bold text-sm transition-all disabled:opacity-45 disabled:cursor-not-allowed bg-primary text-primary-foreground"
         >
           {loading ? "Signing in…" : "Sign In"}
         </button>

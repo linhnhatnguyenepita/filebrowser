@@ -46,28 +46,20 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
 
   return (
     <aside
-      className="flex flex-col shrink-0"
-      style={{
-        width: "260px",
-        background: "var(--surface-1)",
-        borderRight: "1px solid var(--border-strong)",
-      }}
+      className="flex flex-col shrink-0 bg-card border-r border-border"
+      style={{ width: "260px" }}
     >
       {/* App title */}
       <div
-        className="flex items-center gap-2 px-4 shrink-0"
-        style={{
-          height: "52px",
-          borderBottom: "1px solid var(--border-strong)",
-        }}
+        className="flex items-center gap-2 px-4 shrink-0 border-b border-border"
+        style={{ height: "52px" }}
       >
         <HardDrive
           size={18}
-          style={{ color: "var(--primary)", flexShrink: 0 }}
+          className="shrink-0"
         />
         <span
-          className="font-semibold text-sm truncate"
-          style={{ color: "var(--text-primary)" }}
+          className="font-semibold text-sm truncate text-foreground"
         >
           FileBrowser
         </span>
@@ -78,15 +70,13 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
         <div className="relative">
           <button
             onClick={() => setSourceDropdownOpen((o) => !o)}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors"
-            style={{
-              background: "var(--surface-2)",
-              color: "var(--text-secondary)",
-              border: "1px solid var(--border-strong)",
-            }}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors border border-border bg-background text-foreground hover:bg-accent"
           >
-            <HardDrive size={12} style={{ color: "var(--primary)", flexShrink: 0 }} />
-            <span className="flex-1 text-left truncate" style={{ color: "var(--text-primary)" }}>
+            <HardDrive size={12} className="shrink-0" />
+            <span
+              className="flex-1 text-left truncate"
+              style={{ fontSize: "14px", fontWeight: 700 }}
+            >
               {activeSource || "default"}
             </span>
             {sourceNames.length > 1 && (
@@ -103,39 +93,20 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
           {/* Source dropdown */}
           {sourceDropdownOpen && sourceNames.length > 1 && (
             <div
-              className="absolute left-0 right-0 top-full mt-1 rounded-lg overflow-hidden z-50"
-              style={{
-                background: "var(--surface-2)",
-                border: "1px solid var(--border-strong)",
-                boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
-              }}
+              className="absolute left-0 right-0 top-full mt-1 rounded-lg overflow-hidden z-50 bg-card border border-border shadow-md"
             >
               {sourceNames.map((name) => (
                 <button
                   key={name}
                   onClick={() => handleSourceSelect(name)}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-xs transition-colors"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-xs transition-colors hover:bg-accent"
                   style={{
-                    color:
-                      name === activeSource
-                        ? "var(--text-primary)"
-                        : "var(--text-secondary)",
-                    background:
-                      name === activeSource ? "var(--surface-3)" : "transparent",
+                    color: name === activeSource ? "var(--foreground)" : "var(--muted-foreground)",
+                    background: name === activeSource ? "var(--accent)" : "transparent",
                     textAlign: "left",
                   }}
-                  onMouseEnter={(e) => {
-                    if (name !== activeSource)
-                      (e.currentTarget as HTMLButtonElement).style.background =
-                        "var(--surface-3)";
-                  }}
-                  onMouseLeave={(e) => {
-                    if (name !== activeSource)
-                      (e.currentTarget as HTMLButtonElement).style.background =
-                        "transparent";
-                  }}
                 >
-                  <HardDrive size={12} style={{ color: "var(--primary)" }} />
+                  <HardDrive size={12} />
                   {name}
                 </button>
               ))}
@@ -155,21 +126,18 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
 
       {/* Footer: user + logout */}
       <div
-        className="px-3 py-2 shrink-0 flex items-center gap-2"
-        style={{ borderTop: "1px solid var(--border-strong)" }}
+        className="px-3 py-2 shrink-0 flex items-center gap-2 border-t border-border"
       >
         {/* Username */}
         <div className="flex-1 min-w-0">
           <div
-            className="text-xs font-medium truncate"
-            style={{ color: "var(--text-primary)" }}
+            className="text-xs font-medium truncate text-foreground"
           >
             {user?.username ?? "User"}
           </div>
           {user?.permissions?.admin && (
             <div
-              className="text-[10px]"
-              style={{ color: "var(--text-secondary)" }}
+              className="text-[10px] text-muted-foreground"
             >
               Admin
             </div>
@@ -180,19 +148,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
         <button
           onClick={handleLogout}
           disabled={loggingOut}
-          className="p-1.5 rounded-lg transition-colors disabled:opacity-50"
-          style={{ color: "var(--text-secondary)" }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background =
-              "var(--surface-3)";
-            (e.currentTarget as HTMLButtonElement).style.color = "var(--error)";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background =
-              "transparent";
-            (e.currentTarget as HTMLButtonElement).style.color =
-              "var(--text-secondary)";
-          }}
+          className="p-1.5 rounded-lg transition-colors disabled:opacity-50 text-muted-foreground hover:bg-accent hover:text-foreground"
           title="Log out"
           aria-label="Log out"
         >

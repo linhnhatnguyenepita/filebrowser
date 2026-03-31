@@ -54,12 +54,7 @@ export default function Header({ onNavigate, onUpload, onNewFolder }: HeaderProp
 
   return (
     <header
-      className="flex items-center gap-3 px-4 shrink-0"
-      style={{
-        height: "52px",
-        background: "var(--surface-1)",
-        borderBottom: "1px solid var(--border-strong)",
-      }}
+      className="flex items-center gap-3 px-4 pt-2 pb-2 shrink-0 bg-background border-b border-border"
     >
       {/* Breadcrumbs — left */}
       <div className="flex-1 min-w-0">
@@ -73,38 +68,20 @@ export default function Header({ onNavigate, onUpload, onNewFolder }: HeaderProp
       >
         <Search
           size={14}
-          className="absolute left-3 pointer-events-none"
-          style={{ color: "var(--text-secondary)" }}
+          className="absolute left-3 pointer-events-none text-muted-foreground"
         />
         <input
           type="text"
           placeholder="Search files…"
           value={inputValue}
           onChange={(e) => handleSearchChange(e.target.value)}
-          className="w-full rounded-lg text-sm outline-none transition-all"
-          style={{
-            paddingLeft: "32px",
-            paddingRight: inputValue ? "32px" : "12px",
-            paddingTop: "6px",
-            paddingBottom: "6px",
-            background: "var(--surface-3)",
-            color: "var(--text-primary)",
-            border: "1px solid transparent",
-          }}
-          onFocus={(e) => {
-            (e.currentTarget as HTMLInputElement).style.border =
-              "1px solid var(--border-strong)";
-          }}
-          onBlur={(e) => {
-            (e.currentTarget as HTMLInputElement).style.border =
-              "1px solid transparent";
-          }}
+          className="w-full rounded-lg text-sm outline-none transition-all bg-input text-foreground border border-transparent focus:border-foreground px-8"
+          style={{ paddingTop: "6px", paddingBottom: "6px" }}
         />
         {inputValue && (
           <button
             onClick={handleClearSearch}
-            className="absolute right-2 rounded transition-opacity hover:opacity-80"
-            style={{ color: "var(--text-secondary)" }}
+            className="absolute right-2 rounded transition-opacity hover:opacity-80 text-muted-foreground"
             aria-label="Clear search"
           >
             <X size={14} />
@@ -113,24 +90,14 @@ export default function Header({ onNavigate, onUpload, onNewFolder }: HeaderProp
       </div>
 
       {/* Action buttons — right */}
-      <div className="flex items-center gap-1 shrink-0">
+      <div className="flex items-center gap-2 shrink-0">
         {/* View mode toggle */}
         <button
           onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-          className="p-2 rounded-lg transition-colors"
+          className="p-2 rounded-lg transition-colors hover:bg-accent"
           style={{
-            color:
-              viewMode === "grid" ? "var(--primary)" : "var(--text-secondary)",
-            background: "transparent",
+            color: viewMode === "grid" ? "var(--foreground)" : "var(--muted-foreground)",
           }}
-          onMouseEnter={(e) =>
-            ((e.currentTarget as HTMLButtonElement).style.background =
-              "var(--surface-3)")
-          }
-          onMouseLeave={(e) =>
-            ((e.currentTarget as HTMLButtonElement).style.background =
-              "transparent")
-          }
           title={viewMode === "grid" ? "Switch to list view" : "Switch to grid view"}
           aria-label={
             viewMode === "grid" ? "Switch to list view" : "Switch to grid view"
@@ -145,7 +112,7 @@ export default function Header({ onNavigate, onUpload, onNewFolder }: HeaderProp
           style={{
             width: "1px",
             height: "20px",
-            background: "var(--border-strong)",
+            background: "var(--border)",
             opacity: 0.5,
           }}
         />
@@ -153,54 +120,22 @@ export default function Header({ onNavigate, onUpload, onNewFolder }: HeaderProp
         {/* Upload */}
         <button
           onClick={onUpload}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
-          style={{
-            color: "var(--text-secondary)",
-            background: "transparent",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background =
-              "var(--surface-3)";
-            (e.currentTarget as HTMLButtonElement).style.color =
-              "var(--text-primary)";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background =
-              "transparent";
-            (e.currentTarget as HTMLButtonElement).style.color =
-              "var(--text-secondary)";
-          }}
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors bg-foreground text-background hover:opacity-90"
           title="Upload files"
           aria-label="Upload files"
         >
-          <Upload size={14} />
+          <Upload size={15} />
           Upload
         </button>
 
         {/* New folder */}
         <button
           onClick={onNewFolder}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
-          style={{
-            color: "var(--text-secondary)",
-            background: "transparent",
-          }}
-          onMouseEnter={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background =
-              "var(--surface-3)";
-            (e.currentTarget as HTMLButtonElement).style.color =
-              "var(--text-primary)";
-          }}
-          onMouseLeave={(e) => {
-            (e.currentTarget as HTMLButtonElement).style.background =
-              "transparent";
-            (e.currentTarget as HTMLButtonElement).style.color =
-              "var(--text-secondary)";
-          }}
+          className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors bg-foreground text-background hover:opacity-90"
           title="New folder"
           aria-label="New folder"
         >
-          <FolderPlus size={14} />
+          <FolderPlus size={15} />
           New folder
         </button>
       </div>

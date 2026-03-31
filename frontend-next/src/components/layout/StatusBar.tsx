@@ -28,21 +28,13 @@ export default function StatusBar() {
 
   return (
     <div
-      className="flex items-center justify-between px-4 shrink-0"
-      style={{
-        height: "36px",
-        background: "var(--surface-1)",
-        borderTop: "1px solid var(--border-strong)",
-        fontSize: "12px",
-      }}
+      className="flex items-center justify-between px-4 shrink-0 bg-background border-t border-border text-muted-foreground"
+      style={{ height: "36px", fontSize: "12px" }}
     >
       {/* Left: item counts */}
-      <div
-        className="flex items-center gap-3"
-        style={{ color: "var(--text-secondary)" }}
-      >
+      <div className="flex items-center gap-3">
         {selectionCount > 0 ? (
-          <span style={{ color: "var(--primary)" }}>
+          <span className="text-foreground">
             {selectionCount} selected
           </span>
         ) : (
@@ -103,19 +95,7 @@ export default function StatusBar() {
           {/* Clear selection */}
           <button
             onClick={clearSelection}
-            className="ml-2 px-2 py-0.5 rounded text-xs transition-colors"
-            style={{
-              color: "var(--text-secondary)",
-              background: "transparent",
-            }}
-            onMouseEnter={(e) =>
-              ((e.currentTarget as HTMLButtonElement).style.color =
-                "var(--text-primary)")
-            }
-            onMouseLeave={(e) =>
-              ((e.currentTarget as HTMLButtonElement).style.color =
-                "var(--text-secondary)")
-            }
+            className="ml-2 px-2 py-0.5 rounded text-xs transition-colors text-muted-foreground hover:text-foreground"
           >
             Clear
           </button>
@@ -139,21 +119,20 @@ function ActionButton({ onClick, title, icon, label, danger }: ActionButtonProps
       onClick={onClick}
       className="flex items-center gap-1 px-2 py-0.5 rounded-md text-xs transition-colors"
       style={{
-        color: danger ? "var(--error)" : "var(--text-secondary)",
+        color: danger ? "var(--destructive)" : "var(--muted-foreground)",
         background: "transparent",
       }}
       onMouseEnter={(e) => {
-        (e.currentTarget as HTMLButtonElement).style.background =
-          danger ? "rgba(238,125,119,0.12)" : "var(--surface-3)";
+        (e.currentTarget as HTMLButtonElement).style.background = "var(--accent)";
         (e.currentTarget as HTMLButtonElement).style.color = danger
-          ? "var(--error)"
-          : "var(--text-primary)";
+          ? "var(--destructive)"
+          : "var(--foreground)";
       }}
       onMouseLeave={(e) => {
         (e.currentTarget as HTMLButtonElement).style.background = "transparent";
         (e.currentTarget as HTMLButtonElement).style.color = danger
-          ? "var(--error)"
-          : "var(--text-secondary)";
+          ? "var(--destructive)"
+          : "var(--muted-foreground)";
       }}
       title={title}
       aria-label={title}

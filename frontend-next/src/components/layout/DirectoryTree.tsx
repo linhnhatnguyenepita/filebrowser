@@ -47,29 +47,15 @@ function TreeNodeItem({
   return (
     <div>
       <div
-        className="flex items-center gap-1 rounded cursor-pointer select-none transition-colors"
+        className="flex items-center gap-1 rounded cursor-pointer select-none transition-colors hover:bg-accent"
         style={{
           paddingLeft: `${depth * 12 + 8}px`,
           paddingRight: "8px",
           paddingTop: "4px",
           paddingBottom: "4px",
-          background: isActive ? "var(--surface-3)" : "transparent",
-          color: isActive ? "var(--text-primary)" : "var(--text-secondary)",
-        }}
-        onMouseEnter={(e) => {
-          if (!isActive) {
-            (e.currentTarget as HTMLDivElement).style.background =
-              "var(--surface-2)";
-            (e.currentTarget as HTMLDivElement).style.color =
-              "var(--text-primary)";
-          }
-        }}
-        onMouseLeave={(e) => {
-          if (!isActive) {
-            (e.currentTarget as HTMLDivElement).style.background = "transparent";
-            (e.currentTarget as HTMLDivElement).style.color =
-              "var(--text-secondary)";
-          }
+          background: isActive ? "var(--accent)" : "transparent",
+          color: isActive ? "var(--foreground)" : "var(--muted-foreground)",
+          fontWeight: isActive ? 500 : 400,
         }}
         onClick={() => {
           onNavigate(node.path);
@@ -100,7 +86,7 @@ function TreeNodeItem({
         </span>
 
         {/* Folder icon */}
-        <span className="shrink-0" style={{ color: "var(--primary)" }}>
+        <span className="shrink-0">
           {node.isExpanded ? <FolderOpen size={14} /> : <Folder size={14} />}
         </span>
 
@@ -109,6 +95,7 @@ function TreeNodeItem({
           className="text-xs truncate flex-1"
           style={{
             fontWeight: isActive ? 500 : 400,
+            fontSize: "14px",
             marginLeft: "4px",
           }}
           title={node.name}

@@ -37,8 +37,7 @@ export default function FileList({ items, onNavigate }: FileListProps) {
   if (items.length === 0) {
     return (
       <div
-        className="flex items-center justify-center h-full text-sm"
-        style={{ color: "var(--text-secondary)" }}
+        className="flex items-center justify-center h-full text-sm text-muted-foreground"
       >
         This folder is empty
       </div>
