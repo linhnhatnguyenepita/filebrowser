@@ -1,4 +1,4 @@
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useState } from "react";
 import type { FileInfo } from "@/lib/api/resources";
 import { getDownloadURL } from "@/lib/api/resources";
 import { useFileStore } from "@/lib/stores/file-store";
@@ -8,7 +8,7 @@ import { isPreviewable } from "@/lib/utils/preview";
 const CLICK_DELAY = 250; // ms
 
 function formatSize(bytes: number): string {
-  if (bytes === 0) return "";
+  if (bytes === 0) return "0 B";
   const units = ["B", "KB", "MB", "GB", "TB"];
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
   return `${(bytes / Math.pow(1024, i)).toFixed(i > 0 ? 1 : 0)} ${units[i]}`;
@@ -22,11 +22,12 @@ interface FileCardProps {
 export default function FileCard({ item, onNavigate }: FileCardProps) {
   const { selected, toggleSelect, source, setPreviewFile } = useFileStore();
   const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [hovered, setHovered] = useState(false);
   const isSelected = selected.has(item.name);
   const isDir = item.type === "directory";
 
   const downloadFile = useCallback(() => {
-    window.open(getDownloadURL(source, item.source ?? source, item.path), "_blank");
+    window.open(getDownloadURL(source, item.path), "_blank");
   }, [source, item]);
 
   const handleClick = useCallback(
@@ -96,18 +97,20 @@ export default function FileCard({ item, onNavigate }: FileCardProps) {
       tabIndex={0}
       role="button"
       aria-label={`${item.name}${isDir ? " (folder)" : ""}`}
-      className="group relative flex flex-col items-center gap-2 rounded-lg p-3 cursor-pointer transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="group relative flex items-center gap-4 rounded-lg p-3 cursor-pointer transition-colors hover:bg-[var(--secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
       style={{
-        background: isSelected ? "var(--accent)" : "transparent",
+        background: isSelected ? "var(--accent)" : hovered ? "var(--secondary)" : "transparent",
         border: isSelected
           ? "1px solid var(--border)"
           : "1px solid transparent",
       }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
       {/* Checkbox */}
       <div
         onClick={handleCheckbox}
-        className="absolute top-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity"
+        className=""
         style={{ opacity: isSelected ? 1 : undefined }}
       >
         <input
@@ -118,20 +121,23 @@ export default function FileCard({ item, onNavigate }: FileCardProps) {
         />
       </div>
 
-      <FileIcon type={item.type} size={32} />
+      <div className="p-4 bg-secondary rounded-lg">
+        <FileIcon type={item.type} size={16} />
+      </div>
 
-      <span
-        className="text-xs text-center truncate w-full text-foreground"
-        title={item.name}
-      >
-        {item.name}
-      </span>
-
-      {!isDir && item.size > 0 && (
-        <span className="text-[10px] text-muted-foreground">
-          {formatSize(item.size)}
+      <div className="flex flex-col items-start justify-center gap-1">
+        <span
+          className="text-sm text-center truncate w-full text-foreground font-medium"
+          title={item.name}
+        >
+          {item.name}
         </span>
-      )}
+        {!isDir && (
+          <span className="text-sm text-muted-foreground">
+            {formatSize(item.size)}
+          </span>
+        )}
+      </div>
     </div>
   );
 }

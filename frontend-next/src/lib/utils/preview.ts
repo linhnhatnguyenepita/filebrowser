@@ -8,6 +8,7 @@ const PREVIEWABLE_MIME_PREFIXES = [
 const PREVIEWABLE_TYPES = new Set([
   "pdf",
   "application/pdf",
+  "application/json",
 ]);
 
 export function isPreviewable(mimeType: string): boolean {
@@ -25,5 +26,6 @@ export function getPreviewType(
   if (mimeType.startsWith("audio/")) return "audio";
   if (mimeType.startsWith("text/")) return "text";
   if (mimeType === "pdf" || mimeType === "application/pdf") return "pdf";
+  if (mimeType === "application/json") return "text";
   return null;
 }

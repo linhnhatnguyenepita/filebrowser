@@ -4,7 +4,7 @@ server:
   logging:
     - levels: "info|warning|error"
   sources:
-    - path: "/srv"
+    - path: "./srv"
 userDefaults:
   editorQuickSave: false                  # show quick save button in editor
   hideSidebarFileActions: false           # hide the file actions in the sidebar

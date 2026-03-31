@@ -271,8 +271,25 @@ func usersPostHandler(w http.ResponseWriter, r *http.Request, d *requestContext)
 func userPutHandler(w http.ResponseWriter, r *http.Request, d *requestContext) (int, error) {
 	givenUserIdString := r.URL.Query().Get("id")
 	username := r.URL.Query().Get("username")
-	num, _ := strconv.ParseUint(givenUserIdString, 10, 32)
-	givenUserId := uint(num)
+
+	var givenUserId uint
+	if givenUserIdString == "self" {
+		givenUserId = d.user.ID
+	} else if givenUserIdString != "" {
+		id, err := strconv.ParseUint(givenUserIdString, 10, 64)
+		if err != nil {
+			return http.StatusBadRequest, fmt.Errorf("invalid id: %w", err)
+		}
+		givenUserId = uint(id)
+	} else if username != "" {
+		u, err := store.Users.Get(username)
+		if err != nil {
+			return http.StatusBadRequest, fmt.Errorf("user not found: %w", err)
+		}
+		givenUserId = u.ID
+	} else {
+		return http.StatusBadRequest, fmt.Errorf("id or username is required")
+	}
 
 	if givenUserId != d.user.ID && !d.user.Permissions.Admin {
 		return http.StatusForbidden, nil
@@ -290,21 +307,15 @@ func userPutHandler(w http.ResponseWriter, r *http.Request, d *requestContext) (
 	if err = json.Unmarshal(body, &req); err != nil {
 		return http.StatusBadRequest, err
 	}
-	if givenUserId != 0 {
-		u, err2 := store.Users.Get(givenUserId)
-		if err2 != nil {
-			return http.StatusBadRequest, fmt.Errorf("no user not found, please provide a valid id or username")
-		}
-		req.User.ID = u.ID
-		req.User.Username = u.Username
-	} else {
-		u, err2 := store.Users.Get(username)
-		if err2 != nil {
-			return http.StatusBadRequest, fmt.Errorf("no user not found, please provide a valid id or username")
-		}
-		req.User.ID = u.ID
-		req.User.Username = u.Username
+
+	// Populate ID and username from the resolved user
+	u, err := store.Users.Get(givenUserId)
+	if err != nil {
+		return http.StatusBadRequest, fmt.Errorf("user not found: %w", err)
 	}
+	req.User.ID = u.ID
+	req.User.Username = u.Username
+
 	if !req.User.OtpEnabled {
 		req.User.TOTPSecret = ""
 		req.User.TOTPNonce = ""

@@ -95,7 +95,7 @@ export default function StatusBar() {
           {/* Clear selection */}
           <button
             onClick={clearSelection}
-            className="ml-2 px-2 py-0.5 rounded text-xs transition-colors text-muted-foreground hover:text-foreground"
+            className="ml-2 px-2 py-0.5 rounded text-sm transition-colors text-muted-foreground hover:text-foreground"
           >
             Clear
           </button>
@@ -117,7 +117,7 @@ function ActionButton({ onClick, title, icon, label, danger }: ActionButtonProps
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-1 px-2 py-0.5 rounded-md text-xs transition-colors"
+      className="flex items-center gap-1 px-2 py-0.5 rounded-md text-sm transition-colors"
       style={{
         color: danger ? "var(--destructive)" : "var(--muted-foreground)",
         background: "transparent",

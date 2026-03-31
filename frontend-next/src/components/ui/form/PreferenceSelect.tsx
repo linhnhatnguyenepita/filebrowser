@@ -1,9 +1,5 @@
 import * as React from "react"
-import { Select as SelectPrimitive, SelectTrigger as SelectTriggerPrimitive, SelectValue, SelectContent, SelectItem } from "@base-ui/react/select"
-
 import { cn } from "@/lib/utils"
-
-export { SelectValue, SelectContent, SelectItem }
 
 interface SelectOption { value: string; label: string; }
 
@@ -19,7 +15,8 @@ interface PreferenceSelectProps {
 }
 
 export function PreferenceSelect({ label, description, value, options, onChange, onValueChange, placeholder, disabled }: PreferenceSelectProps) {
-  const handleValueChange = (val: string) => {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const val = e.target.value;
     onChange?.(val);
     onValueChange?.(val);
   };
@@ -27,23 +24,31 @@ export function PreferenceSelect({ label, description, value, options, onChange,
   return (
     <div className="flex items-center justify-between py-2">
       <div className="flex-1 min-w-0 pr-4">
-        <p className="text-xs font-medium text-foreground leading-none">{label}</p>
+        <p className="text-sm font-medium text-foreground leading-none">{label}</p>
         {description && (
           <p className="text-[10px] text-muted-foreground mt-0.5">{description}</p>
         )}
       </div>
-      <SelectPrimitive value={value} onValueChange={handleValueChange} disabled={disabled}>
-        <SelectTriggerPrimitive className={cn("w-28 h-7 text-xs [&>span]:line-clamp-1")}>
-          <SelectValue placeholder={placeholder} />
-        </SelectTriggerPrimitive>
-        <SelectContent>
-          {options.map((opt) => (
-            <SelectItem key={opt.value} value={opt.value}>
-              {opt.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </SelectPrimitive>
+      <select
+        value={value}
+        onChange={handleChange}
+        disabled={disabled}
+        className={cn(
+          "h-7 text-sm rounded-lg border border-input bg-background px-1.5 pr-6 appearance-none cursor-pointer",
+          "focus:outline-none focus:ring-1 focus:ring-ring"
+        )}
+      >
+        {placeholder && (
+          <option value="" disabled>
+            {placeholder}
+          </option>
+        )}
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }

@@ -48,7 +48,9 @@ export const useAuthStore = create<AuthState>((set) => ({
     await authApi.renewToken();
   },
   updatePreferences: async (prefs) => {
-    const updated = await usersApi.updateUserPreferences(prefs);
-    set({ user: updated });
+    await usersApi.updateUserPreferences(prefs);
+    set((state) => ({
+      user: state.user ? { ...state.user, ...prefs } : null,
+    }));
   },
 }));

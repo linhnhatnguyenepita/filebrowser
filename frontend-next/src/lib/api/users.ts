@@ -26,9 +26,9 @@ export async function getCurrentUser(): Promise<User> {
   return apiFetch<User>(apiPath("users", { id: "self" }));
 }
 
-export async function updateUserPreferences(prefs: Partial<User>): Promise<User> {
-  return apiFetch<User>(apiPath("users", { id: "self" }), {
-    method: "PATCH",
+export async function updateUserPreferences(prefs: Partial<User>): Promise<void> {
+  await apiFetch<User>(apiPath("users", { id: "self" }), {
+    method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(prefs),
   });

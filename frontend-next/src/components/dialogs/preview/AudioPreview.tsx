@@ -170,7 +170,7 @@ export default function AudioPreview({ file }: AudioPreviewProps) {
 
         {/* Progress bar */}
         <div className="flex items-center gap-2">
-          <span className="text-xs text-muted-foreground tabular-nums w-10 text-right">
+          <span className="text-sm text-muted-foreground tabular-nums w-10 text-right">
             {formatTime(currentTime)}
           </span>
           <input
@@ -182,7 +182,7 @@ export default function AudioPreview({ file }: AudioPreviewProps) {
             className="flex-1 h-1 cursor-pointer accent-primary"
             disabled={!blobUrl || loading}
           />
-          <span className="text-xs text-muted-foreground tabular-nums w-10">
+          <span className="text-sm text-muted-foreground tabular-nums w-10">
             {formatTime(duration)}
           </span>
         </div>

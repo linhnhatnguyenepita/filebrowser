@@ -183,7 +183,7 @@ export default function MoveCopyDialog({
           />
         </div>
 
-        <div className="text-xs text-muted-foreground">
+        <div className="text-sm text-muted-foreground">
           Destination: <code>{selectedPath}</code>
         </div>
 

@@ -9,7 +9,7 @@ import { isPreviewable } from "@/lib/utils/preview";
 const CLICK_DELAY = 250; // ms
 
 function formatSize(bytes: number): string {
-  if (bytes === 0) return "\u2014";
+  if (bytes === 0) return "0 B";
   const units = ["B", "KB", "MB", "GB", "TB"];
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
   return `${(bytes / Math.pow(1024, i)).toFixed(i > 0 ? 1 : 0)} ${units[i]}`;
@@ -46,7 +46,7 @@ export default function FileRow({ item, onNavigate }: FileRowProps) {
   const isDir = item.type === "directory";
 
   const downloadFile = useCallback(() => {
-    window.open(getDownloadURL(source, item.source ?? source, item.path), "_blank");
+    window.open(getDownloadURL(source, item.path), "_blank");
   }, [source, item]);
 
   const handleClick = useCallback(
@@ -111,7 +111,7 @@ export default function FileRow({ item, onNavigate }: FileRowProps) {
       tabIndex={0}
       role="button"
       aria-label={`${item.name}${isDir ? " (folder)" : ""}`}
-      className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring mb-2"
       data-state={isSelected ? "selected" : undefined}
       style={{
         background: isSelected ? "var(--accent)" : undefined,
@@ -126,19 +126,19 @@ export default function FileRow({ item, onNavigate }: FileRowProps) {
           className="w-3.5 h-3.5 accent-foreground cursor-pointer"
         />
       </TableCell>
-      <TableCell className="w-10">
+      <TableCell className="w-10 pr-2">
         <FileIcon type={item.type} size={16} />
       </TableCell>
-      <TableCell className="font-medium text-foreground">
+      <TableCell className="font-medium text-foreground min-w-0 truncate">
         {item.name}
       </TableCell>
-      <TableCell className="text-muted-foreground">
+      <TableCell className="w-24 text-muted-foreground">
         {isDir ? "\u2014" : formatSize(item.size)}
       </TableCell>
-      <TableCell className="text-muted-foreground">
+      <TableCell className="w-44 text-muted-foreground">
         {formatDate(item.modified)}
       </TableCell>
-      <TableCell className="text-muted-foreground">
+      <TableCell className="w-24 text-muted-foreground">
         {formatType(item.type)}
       </TableCell>
     </TableRow>

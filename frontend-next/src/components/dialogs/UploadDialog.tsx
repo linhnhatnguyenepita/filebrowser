@@ -212,11 +212,11 @@ export default function UploadDialog({ open, onClose }: UploadDialogProps) {
                     </div>
                   )}
                   {upload.status === "done" && (
-                    <span className="text-xs text-green-600">Done</span>
+                    <span className="text-sm text-green-600">Done</span>
                   )}
                   {(upload.status === "error" ||
                     upload.status === "conflict") && (
-                    <span className="text-xs text-destructive">
+                    <span className="text-sm text-destructive">
                       {upload.error}
                     </span>
                   )}

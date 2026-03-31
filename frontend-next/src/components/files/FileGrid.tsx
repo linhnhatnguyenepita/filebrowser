@@ -22,7 +22,7 @@ export default function FileGrid({ items, onNavigate }: FileGridProps) {
     <div
       className="grid gap-1"
       style={{
-        gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
+        gridTemplateColumns: "repeat(auto-fill, minmax(350px, 1fr))",
       }}
     >
       {items.map((item) => (

@@ -21,13 +21,25 @@ export default function FileBrowser() {
   const { viewMode, activeDialog, openDialog, closeDialog } = useUIStore();
 
   const urlPath = location.pathname.replace(/^\/files/, "") || "/";
+  const urlSource = new URLSearchParams(location.search).get("source") || "";
+
+  // Sync source from URL to store — this ensures the store is set to the URL source
+  // even before fetchUser() completes its own source initialization.
+  useEffect(() => {
+    if (urlSource && urlSource !== source) {
+      useFileStore.setState({ source: urlSource });
+    }
+  }, [urlSource, source]);
 
   useEffect(() => {
-    fetchDirectory(urlPath, source);
+    if (source) {
+      fetchDirectory(urlPath, source);
+    }
   }, [urlPath, source]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleNavigate = useCallback(
     (newPath: string, newSource?: string) => {
+      const effectiveSource = newSource ?? source;
       if (newSource && newSource !== source) {
         useFileStore.setState({ source: newSource });
       }
@@ -35,7 +47,7 @@ export default function FileBrowser() {
         .split("/")
         .map((seg) => (seg ? encodeURIComponent(seg) : seg))
         .join("/");
-      navigate(`/files${encodedPath === "/" ? "" : encodedPath}`);
+      navigate(`/files${encodedPath === "/" ? "" : encodedPath}?source=${encodeURIComponent(effectiveSource)}`);
     },
     [navigate, source]
   );

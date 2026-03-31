@@ -54,6 +54,27 @@ definitions:
       url:
         type: string
     type: object
+  http.FileMetadata:
+    properties:
+      albumArt:
+        description: base64 data URI
+        type: string
+      artist:
+        description: audio artist
+        type: string
+      duration:
+        description: seconds (float for sub-second precision)
+        type: number
+      height:
+        description: image/video height (populated client-side)
+        type: integer
+      title:
+        description: audio/video title
+        type: string
+      width:
+        description: image/video width (populated client-side)
+        type: integer
+    type: object
   http.GroupListResponse:
     properties:
       groups:
@@ -68,6 +89,19 @@ definitions:
       status:
         type: integer
       token:
+        type: string
+    type: object
+  http.MetadataResponse:
+    properties:
+      metadata:
+        $ref: '#/definitions/http.FileMetadata'
+      modified:
+        type: string
+      name:
+        type: string
+      size:
+        type: integer
+      type:
         type: string
     type: object
   http.MoveCopyItem:
@@ -3337,6 +3371,55 @@ paths:
               type: string
             type: object
       summary: Get directory items
+      tags:
+      - Resources
+  /api/resources/metadata:
+    get:
+      description: Returns file metadata including audio album art, video/audio duration,
+        and image dimensions.
+      parameters:
+      - description: Index path to the file
+        in: query
+        name: path
+        required: true
+        type: string
+      - description: Source name
+        in: query
+        name: source
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/http.MetadataResponse'
+        "400":
+          description: Bad request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "403":
+          description: Forbidden
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: File not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get file metadata
       tags:
       - Resources
   /api/resources/preview:

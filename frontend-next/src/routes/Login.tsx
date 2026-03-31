@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/lib/stores/auth-store";
+import { getDefaultSource } from "@/lib/stores/source-utils";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -22,7 +23,8 @@ export default function Login() {
     setLoading(true);
     try {
       await login(username, password);
-      navigate("/files", { replace: true });
+      const source = await getDefaultSource();
+      navigate(`/files?source=${encodeURIComponent(source)}`, { replace: true });
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {

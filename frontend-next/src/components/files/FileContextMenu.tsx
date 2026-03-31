@@ -60,7 +60,7 @@ export default function FileContextMenu({ item, children }: FileContextMenuProps
 
   return (
     <ContextMenu>
-      <ContextMenuTrigger>{children}</ContextMenuTrigger>
+      <ContextMenuTrigger className="contents">{children}</ContextMenuTrigger>
       <ContextMenuContent>
         {!isDir && (
           <>

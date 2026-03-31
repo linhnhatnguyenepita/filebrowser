@@ -14,7 +14,7 @@ export function PreferenceSegment({ label, description, value, options, onChange
     <div className="py-2">
       <div className="flex items-center justify-between mb-1.5">
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-medium text-foreground leading-none">{label}</p>
+          <p className="text-sm font-medium text-foreground leading-none">{label}</p>
           {description && (
             <p className="text-[10px] text-muted-foreground mt-0.5">{description}</p>
           )}
@@ -27,7 +27,7 @@ export function PreferenceSegment({ label, description, value, options, onChange
             type="button"
             onClick={() => onChange(opt.value)}
             disabled={disabled}
-            className={`flex-1 text-xs px-2 py-1 rounded-md transition-colors ${
+            className={`flex-1 text-sm px-2 py-1 rounded-md transition-colors ${
               value === opt.value
                 ? "bg-background text-foreground shadow-xs font-medium"
                 : "text-muted-foreground hover:text-foreground"

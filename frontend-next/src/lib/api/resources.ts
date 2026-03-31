@@ -9,6 +9,7 @@ export interface FileInfo {
   hasPreview: boolean;
   isShared: boolean;
   path: string;
+  source?: string;
 }
 
 export interface DirectoryResponse {

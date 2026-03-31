@@ -1,3 +1,5 @@
+import * as React from "react"
+
 interface PreferenceSectionProps {
   title: string;
   description?: string;
@@ -15,7 +17,7 @@ export function PreferenceSection({ title, description, children }: PreferenceSe
           <p className="mt-0.5 text-[10px] text-muted-foreground">{description}</p>
         )}
       </div>
-      <div className="space-y-0">{children}</div>
+      <div className="flex flex-col gap-4">{children}</div>
     </div>
   );
 }

@@ -45,11 +45,15 @@ export default function FileList({ items, onNavigate }: FileListProps) {
   }
 
   return (
-    <Table>
+    <Table className="table-fixed">
       <TableHeader>
         <TableRow>
-          <TableHead className="w-10" />
-          <TableHead className="w-10" />
+          <TableHead className="w-10 pr-0">
+            <span className="sr-only">Select</span>
+          </TableHead>
+          <TableHead className="w-10 pr-0">
+            <span className="sr-only">Icon</span>
+          </TableHead>
           <TableHead
             onClick={() => handleSort("name")}
             className="cursor-pointer select-none"
@@ -60,7 +64,7 @@ export default function FileList({ items, onNavigate }: FileListProps) {
           </TableHead>
           <TableHead
             onClick={() => handleSort("size")}
-            className="cursor-pointer select-none"
+            className="w-24 cursor-pointer select-none"
           >
             <span className="flex items-center gap-1">
               Size <SortIndicator field="size" />
@@ -68,13 +72,13 @@ export default function FileList({ items, onNavigate }: FileListProps) {
           </TableHead>
           <TableHead
             onClick={() => handleSort("modified")}
-            className="cursor-pointer select-none"
+            className="w-44 cursor-pointer select-none"
           >
             <span className="flex items-center gap-1">
               Modified <SortIndicator field="modified" />
             </span>
           </TableHead>
-          <TableHead>Type</TableHead>
+          <TableHead className="w-24">Type</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

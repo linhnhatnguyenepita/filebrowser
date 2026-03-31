@@ -84,7 +84,7 @@ export default function TextPreview({ file }: TextPreviewProps) {
   return (
     <div className="flex flex-col rounded-xl overflow-hidden max-h-[80vh]">
       {truncated && (
-        <div className="px-3 py-1.5 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 text-xs border-b border-yellow-500/20">
+        <div className="px-3 py-1.5 bg-yellow-500/10 text-yellow-600 dark:text-yellow-400 text-sm border-b border-yellow-500/20">
           File truncated at 1MB.{" "}
           <a
             href={getDownloadURL(file.source ?? "default", file.path)}
@@ -96,7 +96,7 @@ export default function TextPreview({ file }: TextPreviewProps) {
           for full content.
         </div>
       )}
-      <div className="flex overflow-auto bg-muted/30 font-mono text-xs leading-6">
+      <div className="flex overflow-auto bg-muted/30 font-mono text-sm leading-6">
         {/* Line numbers */}
         <div className="flex-shrink-0 select-none text-right pr-3 pl-3 py-3 text-muted-foreground/60 border-r border-border/50 min-w-[3rem]">
           {lines.map((_, i) => (

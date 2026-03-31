@@ -1,8 +1,7 @@
 import { useEffect, useRef } from "react";
-import ProfilePanel from "./ProfilePanel";
 import SettingsPanel from "./SettingsPanel";
 
-export type TabId = "none" | "profile" | "settings";
+export type TabId = "none" | "settings";
 
 interface SidebarTabPanelProps {
   activeTab: TabId;
@@ -31,7 +30,6 @@ export default function SidebarTabPanel({ activeTab, onClose }: SidebarTabPanelP
       ref={panelRef}
       className="flex-1 overflow-y-auto px-3 py-2"
     >
-      {activeTab === "profile" && <ProfilePanel />}
       {activeTab === "settings" && <SettingsPanel />}
     </div>
   );

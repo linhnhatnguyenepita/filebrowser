@@ -49,10 +49,10 @@ function TreeNodeItem({
       <div
         className="flex items-center gap-1 rounded cursor-pointer select-none transition-colors hover:bg-accent"
         style={{
-          paddingLeft: `${depth * 12 + 8}px`,
-          paddingRight: "8px",
-          paddingTop: "4px",
-          paddingBottom: "4px",
+          paddingLeft: `${depth * 12 + 10}px`,
+          paddingRight: "10px",
+          paddingTop: "8px",
+          paddingBottom: "8px",
           background: isActive ? "var(--accent)" : "transparent",
           color: isActive ? "var(--foreground)" : "var(--muted-foreground)",
           fontWeight: isActive ? 500 : 400,
@@ -92,7 +92,7 @@ function TreeNodeItem({
 
         {/* Folder name */}
         <span
-          className="text-xs truncate flex-1"
+          className="text-lg truncate flex-1"
           style={{
             fontWeight: isActive ? 500 : 400,
             fontSize: "14px",
@@ -135,6 +135,7 @@ export default function DirectoryTree({
   // Load children for a node at the given path
   const loadChildren = useCallback(
     async (nodePath: string) => {
+      if (!source) return; // Guard: don't fetch with empty source
       setRoot((prev) => updateNode(prev, nodePath, { isLoading: true }));
       try {
         const data = await getItems(source, nodePath, "folders");
@@ -180,6 +181,7 @@ export default function DirectoryTree({
   // Auto-expand root on initial mount (once), and reset on source change.
   // Deferred via setTimeout to avoid setState-in-effect lint rule.
   useEffect(() => {
+    if (!source) return; // Guard: don't expand until source is available
     if (!initialExpandDone.current) {
       initialExpandDone.current = true;
       const t = setTimeout(() => handleToggle("/"), 0);

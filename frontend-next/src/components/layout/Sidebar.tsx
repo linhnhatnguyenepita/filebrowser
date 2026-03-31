@@ -38,7 +38,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
   return (
     <aside
       className="flex flex-col shrink-0 bg-card border-r border-border"
-      style={{ width: "260px" }}
+      style={{ width: "360px" }}
     >
       {/* App title */}
       <div
@@ -50,7 +50,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
           className="shrink-0"
         />
         <span
-          className="font-semibold text-sm truncate text-foreground"
+          className="font-semibold text-md truncate text-foreground"
         >
           FileBrowser
         </span>
@@ -61,7 +61,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
         <div className="relative">
           <button
             onClick={() => setSourceDropdownOpen((o) => !o)}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors border border-border bg-background text-foreground hover:bg-accent"
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-md font-medium transition-colors border border-border bg-background text-foreground hover:bg-accent"
           >
             <HardDrive size={12} className="shrink-0" />
             <span
@@ -90,7 +90,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
                 <button
                   key={name}
                   onClick={() => handleSourceSelect(name)}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-xs transition-colors hover:bg-accent"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-md transition-colors hover:bg-accent"
                   style={{
                     color: name === activeSource ? "var(--foreground)" : "var(--muted-foreground)",
                     background: name === activeSource ? "var(--accent)" : "transparent",

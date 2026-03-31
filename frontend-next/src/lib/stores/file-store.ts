@@ -21,13 +21,16 @@ interface FileState {
 }
 
 function buildItems(data: DirectoryResponse): FileInfo[] {
+  const source = data.source;
   const folders = (data.folders || []).map((f) => ({
     ...f,
+    source,
     path: data.path === "/" ? `/${f.name}/` : `${data.path}${f.name}/`,
     type: "directory" as const,
   }));
   const files = (data.files || []).map((f) => ({
     ...f,
+    source,
     path: data.path === "/" ? `/${f.name}` : `${data.path}${f.name}`,
   }));
   return [...folders, ...files];
@@ -35,14 +38,16 @@ function buildItems(data: DirectoryResponse): FileInfo[] {
 
 export const useFileStore = create<FileState>((set) => ({
   path: "/",
-  source: "default",
-  listing: null,
+  source: "",  listing: null,
   items: [],
   loading: false,
   selected: new Set(),
   sortBy: "name",
   sortAsc: true,
   fetchDirectory: async (path, source) => {
+    // #region agent log
+    fetch('http://127.0.0.1:7419/ingest/15698139-aa77-4be0-8181-aa4c755deb9e',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'6731df'},body:JSON.stringify({sessionId:'6731df',location:'file-store.ts:fetchDirectory:entry',message:'fetchDirectory called',data:{path,source,initialSource:'/',modulePhase:'fetchDirectory'},timestamp:Date.now(),runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+    // #endregion
     set({ loading: true, path, source, selected: new Set() });
     try {
       const data = await resourcesApi.fetchDirectory(source, path);

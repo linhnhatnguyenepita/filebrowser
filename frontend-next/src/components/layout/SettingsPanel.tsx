@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { Button } from "@/components/ui/button";
 import { PreferenceSection, PreferenceToggle, PreferenceSegment, PreferenceSelect } from "@/components/ui/form";
+import { Shield, Eye, Share2, FolderPlus, Trash2, Download } from "lucide-react";
 
 function themeToString(darkMode: boolean | null): "light" | "dark" | "system" {
   if (darkMode === null) return "system";
@@ -47,6 +48,15 @@ export default function SettingsPanel() {
 
   const markDirty = () => setIsDirty(true);
 
+  const permissionIcons: Record<string, React.ReactNode> = {
+    admin: <Shield size={10} />,
+    modify: <Eye size={10} />,
+    share: <Share2 size={10} />,
+    create: <FolderPlus size={10} />,
+    delete: <Trash2 size={10} />,
+    download: <Download size={10} />,
+  };
+
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
@@ -73,8 +83,41 @@ export default function SettingsPanel() {
     }
   };
 
+  if (!user) return null;
+
   return (
     <div className="space-y-4">
+      {/* Identity card */}
+      <div className="border border-border rounded-lg p-3 space-y-2">
+        <div className="flex items-center gap-2">
+          <div className="size-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">
+            {user.username[0].toUpperCase()}
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-foreground">{user.username}</p>
+            <p className="text-[10px] text-muted-foreground">{user.scope}</p>
+          </div>
+        </div>
+        {user.scopes?.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {user.scopes.map((s) => (
+              <span key={s.scope} className="text-[9px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+                {s.name}
+              </span>
+            ))}
+          </div>
+        )}
+        <div className="flex flex-wrap gap-1">
+          {Object.entries(user.permissions ?? {}).map(([key, val]) =>
+            val ? (
+              <span key={key} className="inline-flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded bg-primary/10 text-primary">
+                {permissionIcons[key]} {key}
+              </span>
+            ) : null
+          )}
+        </div>
+      </div>
+
       <PreferenceSection title="Display">
         <PreferenceSegment
           label="Theme"
@@ -111,13 +154,13 @@ export default function SettingsPanel() {
         />
         <div className="flex items-center justify-between py-2">
           <div className="flex-1 min-w-0 pr-4">
-            <p className="text-xs font-medium text-foreground leading-none">Default Sort</p>
+            <p className="text-sm font-medium text-foreground leading-none">Default Sort</p>
           </div>
           <div className="flex gap-1">
             <select
               value={sortBy}
               onChange={(e) => { setSortBy(e.target.value); markDirty(); }}
-              className="h-7 text-xs rounded-lg border border-input bg-background px-1.5 pr-6 appearance-none"
+              className="h-7 text-sm rounded-lg border border-input bg-background px-1.5 pr-6 appearance-none"
             >
               <option value="name">Name</option>
               <option value="size">Size</option>
@@ -126,7 +169,7 @@ export default function SettingsPanel() {
             <select
               value={sortAsc ? "asc" : "desc"}
               onChange={(e) => { setSortAsc(e.target.value === "asc"); markDirty(); }}
-              className="h-7 text-xs rounded-lg border border-input bg-background px-1.5 pr-6 appearance-none"
+              className="h-7 text-sm rounded-lg border border-input bg-background px-1.5 pr-6 appearance-none"
             >
               <option value="asc">Asc</option>
               <option value="desc">Desc</option>
