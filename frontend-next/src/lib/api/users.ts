@@ -14,7 +14,7 @@ export interface User {
     download: boolean;
   };
   viewMode: string;
-  darkMode: boolean;
+  darkMode: boolean | null;
   locale: string;
   sorting: { by: string; asc: boolean };
   singleClick: boolean;
