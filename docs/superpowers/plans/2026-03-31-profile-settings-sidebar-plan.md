@@ -39,6 +39,44 @@ frontend-next/src/
 
 ---
 
+## Phase 1 — Foundation (API + Store)
+
+Tasks 1 and 2. No other tasks depend on these, but they are required before the panels can save. These are the most isolated tasks — pure API and state logic with no UI.
+
+- **Phase 1A:** Task 1 — Add `updateUserPreferences` API function
+- **Phase 1B:** Task 2 — Add `updatePreferences` to auth store
+
+---
+
+## Phase 2 — UI Primitives (Switch + Form Components)
+
+Tasks 3 and 4. No dependency on Phase 1. These produce the building blocks the panels consume. Both can be built and committed independently.
+
+- **Phase 2A:** Task 3 — Create Switch UI component
+- **Phase 2B:** Task 4 — Create reusable preference form primitives
+
+---
+
+## Phase 3 — Feature Panels + Footer
+
+Tasks 5, 6, 7, 8. These are the meat of the feature. Tasks 5 and 6 (SidebarFooter, SidebarTabPanel) can start as soon as the UI primitives are ready. Tasks 7 and 8 (ProfilePanel, SettingsPanel) need both the form primitives (Task 4) and the auth store action (Task 2) to be in place.
+
+- **Phase 3A:** Task 5 — Create SidebarFooter component
+- **Phase 3B:** Task 6 — Create SidebarTabPanel component
+- **Phase 3C:** Task 7 — Create ProfilePanel component
+- **Phase 3D:** Task 8 — Create SettingsPanel component
+
+---
+
+## Phase 4 — Integration + Wiring
+
+Tasks 9 and 10. These wire everything into the existing app.
+
+- **Phase 4A:** Task 9 — Integrate SidebarFooter + SidebarTabPanel into Sidebar.tsx
+- **Phase 4B:** Task 10 — Wire dark mode class in App.tsx
+
+---
+
 ## Task 1: Add `updateUserPreferences` API function
 
 **Files:**
@@ -71,6 +109,8 @@ git commit -m "feat(api): add updateUserPreferences PATCH /api/users/self"
 
 ---
 
+## Phase 1B — Store Action
+
 ## Task 2: Add `updatePreferences` to auth store
 
 **Files:**
@@ -101,6 +141,8 @@ git commit -m "feat(auth): add updatePreferences action to auth store"
 **Acceptance criteria:** Calling `authStore.updatePreferences({ showHidden: true })` calls the API and sets `authStore.user` to the returned user.
 
 ---
+
+## Phase 2A — Switch Component
 
 ## Task 3: Create Switch UI component
 
@@ -157,6 +199,8 @@ git commit -m "feat(ui): add Switch component using Base UI"
 **Acceptance criteria:** `<Switch checked={true} />` renders a pill toggle. Unchecked is gray, checked is primary color. The thumb slides left/right on click.
 
 ---
+
+## Phase 2B — Form Primitives
 
 ## Task 4: Create reusable preference form primitives
 
@@ -377,6 +421,8 @@ git commit -m "feat(ui): add reusable preference form primitives"
 
 ---
 
+## Phase 3A — Sidebar Layout Shell
+
 ## Task 5: Create `SidebarFooter` component
 
 **Files:**
@@ -481,6 +527,8 @@ git commit -m "feat(sidebar): add SidebarFooter with tab switcher"
 
 ---
 
+## Phase 3B — Tab Panel Host
+
 ## Task 6: Create `SidebarTabPanel` component
 
 **Files:**
@@ -541,6 +589,8 @@ git commit -m "feat(sidebar): add SidebarTabPanel host component"
 **Acceptance criteria:** When `activeTab` is `"none"`, renders `null`. When `"profile"` or `"settings"`, renders the corresponding panel. Clicking outside the panel (on the directory tree area) calls `onClose`.
 
 ---
+
+## Phase 3C — Profile Panel
 
 ## Task 7: Create `ProfilePanel` component
 
@@ -782,6 +832,8 @@ git commit -m "feat(sidebar): add ProfilePanel with identity card and preference
 
 ---
 
+## Phase 3D — Settings Panel
+
 ## Task 8: Create `SettingsPanel` component
 
 **Files:**
@@ -981,6 +1033,8 @@ git commit -m "feat(sidebar): add SettingsPanel with sectioned preferences"
 
 ---
 
+## Phase 4A — Sidebar Integration
+
 ## Task 9: Integrate into `Sidebar.tsx`
 
 **Files:**
@@ -1018,6 +1072,8 @@ git commit -m "feat(sidebar): integrate SidebarFooter and SidebarTabPanel"
 **Acceptance criteria:** Directory tree hides when a tab is open. Clicking outside a panel closes it. Toggling the active tab re-shows the directory tree. Footer tabs control which panel opens.
 
 ---
+
+## Phase 4B — Dark Mode Wiring
 
 ## Task 10: Wire up dark mode toggle in `App.tsx`
 
