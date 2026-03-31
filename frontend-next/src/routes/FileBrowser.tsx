@@ -18,7 +18,7 @@ export default function FileBrowser() {
   const navigate = useNavigate();
   const location = useLocation();
   const { fetchDirectory, source, items, loading, selected } = useFileStore();
-  const { viewMode, activeDialog, openDialog, closeDialog } = useUIStore();
+  const { viewMode, activeDialog, openDialog, closeDialog, searchQuery, searchResults, searchLoading, searchError } = useUIStore();
 
   const urlPath = location.pathname.replace(/^\/files/, "") || "/";
   const urlSource = new URLSearchParams(location.search).get("source") || "";
@@ -62,6 +62,24 @@ export default function FileBrowser() {
 
   const renameTarget = selectedItems[0] ?? { name: "", isDir: false };
 
+  // Derive display items: search results when searching, directory listing otherwise.
+  // Search results need a `name` field; the backend strips the directory prefix
+  // so the last path segment is the filename.
+  const displayItems = useMemo(() => {
+    if (!searchQuery) return items;
+    return searchResults.map((result) => ({
+      name: result.path.split("/").pop() ?? result.path,
+      size: result.size,
+      modified: result.modified,
+      type: result.type,
+      hidden: false,
+      hasPreview: result.hasPreview,
+      isShared: false,
+      path: result.path,
+      source: result.source,
+    }));
+  }, [searchQuery, items, searchResults]);
+
   return (
     <div
       className="flex h-screen overflow-hidden bg-background"
@@ -82,10 +100,28 @@ export default function FileBrowser() {
             >
               Loading…
             </div>
+          ) : searchLoading ? (
+            <div
+              className="flex items-center justify-center h-full text-muted-foreground"
+            >
+              Searching…
+            </div>
+          ) : searchError ? (
+            <div
+              className="flex items-center justify-center h-full text-muted-foreground"
+            >
+              Search failed: {searchError}
+            </div>
+          ) : searchQuery && searchResults.length === 0 ? (
+            <div
+              className="flex items-center justify-center h-full text-muted-foreground"
+            >
+              No results for &ldquo;{searchQuery}&rdquo;
+            </div>
           ) : viewMode === "grid" ? (
-            <FileGrid items={items} onNavigate={handleNavigate} />
+            <FileGrid items={displayItems} onNavigate={handleNavigate} />
           ) : (
-            <FileList items={items} onNavigate={handleNavigate} />
+            <FileList items={displayItems} onNavigate={handleNavigate} />
           )}
         </main>
 

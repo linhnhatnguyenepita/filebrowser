@@ -42,15 +42,16 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
     >
       {/* App title */}
       <div
-        className="flex items-center gap-2 px-4 shrink-0 border-b border-border"
+        className="flex items-center gap-3 px-4 shrink-0 border-b border-border"
         style={{ height: "52px" }}
       >
         <HardDrive
-          size={18}
+          size={24}
           className="shrink-0"
+          style={{ width: "24px", height: "24px" }}
         />
         <span
-          className="font-semibold text-md truncate text-foreground"
+          className="font-semibold text-lg truncate text-foreground"
         >
           FileBrowser
         </span>
@@ -61,12 +62,16 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
         <div className="relative">
           <button
             onClick={() => setSourceDropdownOpen((o) => !o)}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-md font-medium transition-colors border border-border bg-background text-foreground hover:bg-accent"
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-md font-medium transition-colors border border-border bg-background text-foreground hover:bg-accent"
           >
-            <HardDrive size={12} className="shrink-0" />
+            <HardDrive
+              size={18}
+              className="shrink-0"
+              style={{ width: "18px", height: "18px" }}
+            />
             <span
               className="flex-1 text-left truncate"
-              style={{ fontSize: "14px", fontWeight: 700 }}
+              style={{ fontSize: "16px", fontWeight: 700 }}
             >
               {activeSource || "default"}
             </span>

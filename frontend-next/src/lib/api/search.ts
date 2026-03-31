@@ -1,10 +1,15 @@
 import { apiPath, apiFetch } from "./client";
 
 export interface SearchResult {
+  name: string;
   path: string;
   type: string;
   size: number;
+  modified: string;
+  hasPreview: boolean;
   source: string;
+  hidden?: boolean;
+  isShared?: boolean;
 }
 
 export async function search(

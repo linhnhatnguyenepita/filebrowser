@@ -129,7 +129,7 @@ export default function FileRow({ item, onNavigate }: FileRowProps) {
       <TableCell className="w-10 pr-2 border-b">
         <FileIcon type={item.type} size={16} />
       </TableCell>
-      <TableCell className="font-medium text-foreground min-w-0 truncate border-b">
+      <TableCell className="font-medium text-foreground min-w-0 truncate border-b text-md">
         {item.name}
       </TableCell>
       <TableCell className="w-24 text-muted-foreground border-b">

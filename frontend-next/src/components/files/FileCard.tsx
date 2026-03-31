@@ -119,12 +119,12 @@ export default function FileCard({ item, onNavigate }: FileCardProps) {
       </div>
 
       <div className="p-4 bg-secondary rounded-lg">
-        <FileIcon type={item.type} size={16} />
+        <FileIcon type={item.type} size={18} />
       </div>
 
       <div className="flex flex-col items-start justify-center gap-1">
         <span
-          className="text-sm text-center truncate w-full text-foreground font-medium"
+          className="text-md text-center truncate w-full text-foreground font-medium"
           title={item.name}
         >
           {item.name}

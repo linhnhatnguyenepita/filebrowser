@@ -6,6 +6,7 @@ import {
   Upload,
   FolderPlus,
   X,
+  Loader2,
 } from "lucide-react";
 import { useUIStore } from "@/lib/stores/ui-store";
 import { useFileStore } from "@/lib/stores/file-store";
@@ -18,18 +19,21 @@ interface HeaderProps {
 }
 
 export default function Header({ onNavigate, onUpload, onNewFolder }: HeaderProps) {
-  const { viewMode, setViewMode, search, clearSearch, searchQuery } = useUIStore();
+  const { viewMode, setViewMode, search, clearSearch, searchQuery, searchLoading } = useUIStore();
   const { path, source } = useFileStore();
 
   const [inputValue, setInputValue] = useState(searchQuery);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Debounced search: fires 300ms after last keystroke
+  // Minimum length must match backend (backend/common/settings/config.go:229 — defaults to 3)
+  const MIN_SEARCH_LENGTH = 3;
+
+  // Debounced search: fires 300ms after last keystroke, only when query is long enough
   const handleSearchChange = useCallback(
     (value: string) => {
       setInputValue(value);
       if (debounceRef.current) clearTimeout(debounceRef.current);
-      if (!value.trim()) {
+      if (!value.trim() || value.trim().length < MIN_SEARCH_LENGTH) {
         clearSearch();
         return;
       }
@@ -78,7 +82,11 @@ export default function Header({ onNavigate, onUpload, onNewFolder }: HeaderProp
           className="w-full rounded-lg text-sm outline-none transition-all bg-input text-foreground border border-transparent focus:border-foreground px-8"
           style={{ paddingTop: "6px", paddingBottom: "6px" }}
         />
-        {inputValue && (
+        {searchLoading ? (
+          <span className="absolute right-2 flex items-center animate-spin text-muted-foreground">
+            <Loader2 size={14} />
+          </span>
+        ) : inputValue ? (
           <button
             onClick={handleClearSearch}
             className="absolute right-2 rounded transition-opacity hover:opacity-80 text-muted-foreground"
@@ -86,7 +94,7 @@ export default function Header({ onNavigate, onUpload, onNewFolder }: HeaderProp
           >
             <X size={14} />
           </button>
-        )}
+        ) : null}
       </div>
 
       {/* Action buttons — right */}

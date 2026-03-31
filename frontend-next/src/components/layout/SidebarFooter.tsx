@@ -33,7 +33,7 @@ export default function SidebarFooter({ activeTab, onTabChange }: SidebarFooterP
           {initial}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium truncate text-foreground">{user?.username ?? "User"}</p>
+          <p className="text-md font-medium truncate text-foreground">{user?.username ?? "User"}</p>
           {user?.permissions?.admin && (
             <p className="text-[10px] text-muted-foreground">Admin</p>
           )}

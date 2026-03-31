@@ -133,7 +133,6 @@ func prepSearchOptions(r *http.Request, d *requestContext) (*searchOptions, erro
 	query := r.URL.Query().Get("query")
 	sourcesParam := r.URL.Query().Get("sources")
 	sourceParam := r.URL.Query().Get("source") // deprecated, but still supported
-	scope := r.URL.Query().Get("scope")        // Go automatically decodes query params
 	largest := r.URL.Query().Get("largest") == "true"
 	olderThanUnix, err := parseOptionalUnixQueryParam("olderThan", r.URL.Query().Get("olderThan"))
 	if err != nil {
@@ -143,11 +142,14 @@ func prepSearchOptions(r *http.Request, d *requestContext) (*searchOptions, erro
 	if err != nil {
 		return nil, err
 	}
-	cleanScope, err := utils.SanitizeUserPath(scope)
-	if err != nil {
-		return nil, fmt.Errorf("invalid scope: %v", err)
+	var scope string
+	if rawScope := r.URL.Query().Get("scope"); rawScope != "" {
+		cleanScope, err := utils.SanitizeUserPath(rawScope)
+		if err != nil {
+			return nil, fmt.Errorf("invalid scope: %v", err)
+		}
+		scope = cleanScope
 	}
-	scope = cleanScope
 
 	var sources []string
 	if sourcesParam != "" {

@@ -7,6 +7,7 @@ interface UIState {
   searchQuery: string;
   searchResults: SearchResult[];
   searchLoading: boolean;
+  searchError: string | null;
   activeDialog: string | null;
   sidebarOpen: boolean;
   setViewMode: (mode: "grid" | "list") => void;
@@ -22,20 +23,22 @@ export const useUIStore = create<UIState>((set) => ({
   searchQuery: "",
   searchResults: [],
   searchLoading: false,
+  searchError: null,
   activeDialog: null,
   sidebarOpen: true,
   setViewMode: (mode) => set({ viewMode: mode }),
   search: async (query, source) => {
-    set({ searchQuery: query, searchLoading: true });
+    set({ searchQuery: query, searchLoading: true, searchError: null });
     try {
       const results = await searchApi.search(query, source);
       set({ searchResults: results, searchLoading: false });
-    } catch {
-      set({ searchLoading: false });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      set({ searchError: message, searchLoading: false });
     }
   },
   clearSearch: () =>
-    set({ searchQuery: "", searchResults: [], searchLoading: false }),
+    set({ searchQuery: "", searchResults: [], searchLoading: false, searchError: null }),
   openDialog: (name) => set({ activeDialog: name }),
   closeDialog: () => set({ activeDialog: null }),
   toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),

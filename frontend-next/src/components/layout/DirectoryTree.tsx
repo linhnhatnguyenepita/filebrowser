@@ -86,8 +86,16 @@ function TreeNodeItem({
         </span>
 
         {/* Folder icon */}
-        <span className="shrink-0">
-          {node.isExpanded ? <FolderOpen size={14} /> : <Folder size={14} />}
+        <span
+          className="shrink-0"
+          style={{
+            width: "20px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {node.isExpanded ? <FolderOpen size={20} /> : <Folder size={20} />}
         </span>
 
         {/* Folder name */}
