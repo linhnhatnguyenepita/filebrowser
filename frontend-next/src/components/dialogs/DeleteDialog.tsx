@@ -91,11 +91,16 @@ export default function DeleteDialog({
           </DialogDescription>
         </DialogHeader>
         {items.length > 1 && (
-          <ul className="max-h-40 overflow-auto text-sm text-muted-foreground list-disc pl-5">
+          <div className="max-h-40 overflow-auto space-y-1">
             {items.map((item) => (
-              <li key={item.name}>{item.name}</li>
+              <div
+                key={item.name}
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary/50 text-sm text-muted-foreground"
+              >
+                <span className="truncate">{item.name}</span>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
         <DialogFooter>
           <Button

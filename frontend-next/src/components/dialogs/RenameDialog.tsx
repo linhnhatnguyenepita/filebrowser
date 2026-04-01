@@ -83,7 +83,8 @@ export default function RenameDialog({
               Rename <code>{oldName}</code>
             </DialogDescription>
           </DialogHeader>
-          <div className="py-4">
+          <div className="py-4 space-y-2">
+            <label className="text-sm font-medium text-foreground">New name</label>
             <Input
               autoFocus
               value={newName}
