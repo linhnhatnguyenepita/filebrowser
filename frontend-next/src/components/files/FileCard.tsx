@@ -54,7 +54,6 @@ export default function FileCard({ item, onNavigate }: FileCardProps) {
         onNavigate(item.path);
         return;
       }
-      // Files: single-click selects, double-click previews/downloads
       if (clickTimer.current) {
         clearTimeout(clickTimer.current);
         clickTimer.current = null;
@@ -89,30 +88,6 @@ export default function FileCard({ item, onNavigate }: FileCardProps) {
     [isDir, item, onNavigate, setPreviewFile, downloadFile]
   );
 
-  const handleRename = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    ensureSelected();
-    openDialog("rename");
-  };
-
-  const handleMove = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    ensureSelected();
-    openDialog("moveCopy");
-  };
-
-  const handleCopy = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    ensureSelected();
-    openDialog("moveCopy");
-  };
-
-  const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    ensureSelected();
-    openDialog("delete");
-  };
-
   return (
     <div
       onClick={handleClick}
@@ -121,11 +96,16 @@ export default function FileCard({ item, onNavigate }: FileCardProps) {
       role="button"
       aria-label={`${item.name}${isDir ? " (folder)" : ""}`}
       className={cn(
-        "group relative flex flex-col rounded-xl border border-border bg-card p-4 cursor-pointer text-left transition-all",
-        "hover:border-primary/50 hover:bg-secondary/30",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        isSelected && "border-primary bg-primary/5"
+        "group relative flex flex-col rounded-lg bg-white p-4 cursor-pointer text-left transition-all",
+        "hover:bg-[#fafafa]",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0070f3]",
+        isSelected && "ring-2 ring-[#0070f3]"
       )}
+      style={{
+        boxShadow: isSelected
+          ? "none"
+          : "rgba(0, 0, 0, 0.08) 0px 0px 0px 1px",
+      }}
     >
       {/* Icon + dots menu row */}
       <div className="mb-3 flex items-start justify-between">
@@ -133,7 +113,7 @@ export default function FileCard({ item, onNavigate }: FileCardProps) {
 
         <DropdownMenu>
           <DropdownMenuTrigger
-            className="opacity-0 transition-opacity group-hover:opacity-100 shrink-0 rounded-[min(var(--radius-md),12px)] p-0 size-7 flex items-center justify-center cursor-pointer bg-transparent text-muted-foreground hover:bg-secondary/50 hover:text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="opacity-0 transition-opacity group-hover:opacity-100 shrink-0 rounded-md p-0 size-7 flex items-center justify-center cursor-pointer bg-transparent text-[#666666] hover:text-[#171717] outline-none focus-visible:opacity-100"
             onClick={(e) => e.stopPropagation()}
             aria-label="File actions"
           >
@@ -152,20 +132,20 @@ export default function FileCard({ item, onNavigate }: FileCardProps) {
               </DropdownMenuItem>
             )}
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleRename}>
+            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); ensureSelected(); openDialog("rename"); }}>
               <Pencil className="h-4 w-4" />
               Rename
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleMove}>
+            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); ensureSelected(); openDialog("moveCopy"); }}>
               <FolderInput className="h-4 w-4" />
               Move
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={handleCopy}>
+            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); ensureSelected(); openDialog("moveCopy"); }}>
               <Copy className="h-4 w-4" />
               Copy
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" onClick={handleDelete}>
+            <DropdownMenuItem variant="destructive" onClick={(e) => { e.stopPropagation(); ensureSelected(); openDialog("delete"); }}>
               <Trash2 className="h-4 w-4" />
               Delete
             </DropdownMenuItem>
@@ -174,12 +154,16 @@ export default function FileCard({ item, onNavigate }: FileCardProps) {
       </div>
 
       {/* Name */}
-      <h3 className="mb-1 truncate font-medium text-foreground text-sm" title={item.name}>
+      <h3
+        className="mb-1 truncate text-sm font-medium text-[#171717]"
+        style={{ letterSpacing: "-0.01em" }}
+        title={item.name}
+      >
         {item.name}
       </h3>
 
       {/* Meta */}
-      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+      <div className="flex items-center gap-1.5 text-xs text-[#666666]">
         {!isDir && <span>{formatSize(item.size)}</span>}
       </div>
     </div>

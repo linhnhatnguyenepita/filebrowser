@@ -10,14 +10,14 @@ interface FileGridProps {
 export default function FileGrid({ items, onNavigate }: FileGridProps) {
   if (items.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
+      <div className="flex items-center justify-center h-full text-sm text-[#666666]">
         This folder is empty
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+    <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {items.map((item) => (
         <FileContextMenu key={item.name} item={item}>
           <FileCard item={item} onNavigate={onNavigate} />

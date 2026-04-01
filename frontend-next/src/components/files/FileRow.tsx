@@ -31,17 +31,16 @@ function formatDate(iso: string): string {
     year: "numeric",
     month: "short",
     day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
   });
 }
 
 interface FileRowProps {
   item: FileInfo;
   onNavigate: (path: string) => void;
+  isLast?: boolean;
 }
 
-export default function FileRow({ item, onNavigate }: FileRowProps) {
+export default function FileRow({ item, onNavigate, isLast }: FileRowProps) {
   const { selected, toggleSelect, source, setPreviewFile } = useFileStore();
   const { openDialog } = useUIStore();
   const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -108,34 +107,38 @@ export default function FileRow({ item, onNavigate }: FileRowProps) {
       role="button"
       aria-label={`${item.name}${isDir ? " (folder)" : ""}`}
       className={cn(
-        "grid grid-cols-[1fr_100px_140px_40px] items-center gap-4 px-4 py-3 cursor-pointer transition-colors",
-        "hover:bg-secondary/30",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        isSelected && "bg-primary/5"
+        "grid grid-cols-[1fr_100px_140px_40px] items-center gap-4 px-4 py-2.5 cursor-pointer transition-colors",
+        "hover:bg-[#fafafa]",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0070f3] focus-visible:ring-inset",
+        isSelected && "bg-[#ebf5ff]"
       )}
+      style={!isLast ? { borderBottom: "1px solid #ebebeb" } : {}}
     >
-      {/* Name column: icon + name */}
+      {/* Name column */}
       <div className="flex items-center gap-3 min-w-0">
         <FileIcon type={item.type} iconSize="sm" />
-        <span className="truncate font-medium text-foreground text-sm" title={item.name}>
+        <span
+          className="truncate text-sm font-medium text-[#171717]"
+          title={item.name}
+        >
           {item.name}
         </span>
       </div>
 
       {/* Size */}
-      <span className="text-sm text-muted-foreground">
+      <span className="text-sm text-[#666666]">
         {isDir ? "\u2014" : formatSize(item.size)}
       </span>
 
       {/* Modified */}
-      <span className="text-sm text-muted-foreground">
+      <span className="text-sm text-[#666666]">
         {formatDate(item.modified)}
       </span>
 
       {/* Dots menu */}
       <DropdownMenu>
         <DropdownMenuTrigger
-          className="shrink-0 rounded-[min(var(--radius-md),12px)] p-0 size-7 flex items-center justify-center cursor-pointer bg-transparent text-muted-foreground hover:bg-secondary/50 hover:text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="shrink-0 rounded-md p-0 size-7 flex items-center justify-center cursor-pointer bg-transparent text-[#666666] hover:text-[#171717] outline-none focus-visible:ring-2 focus-visible:ring-[#0070f3]"
           onClick={(e) => e.stopPropagation()}
           aria-label="File actions"
         >

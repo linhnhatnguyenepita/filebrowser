@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { getDefaultSource } from "@/lib/stores/source-utils";
+import { HardDrive } from "lucide-react";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -32,46 +33,89 @@ export default function Login() {
     }
   };
 
+  const inputStyle = {
+    boxShadow: "rgba(0, 0, 0, 0.08) 0px 0px 0px 1px",
+  };
+
+  const inputFocusHandler = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.currentTarget.style.boxShadow = "rgba(0, 0, 0, 0.2) 0px 0px 0px 1px";
+  };
+
+  const inputBlurHandler = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.currentTarget.style.boxShadow = "rgba(0, 0, 0, 0.08) 0px 0px 0px 1px";
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <form onSubmit={handleSubmit}
-            className="w-full max-w-sm p-8 rounded-xl space-y-6 bg-card border border-border shadow-lg">
-        <h1 className="text-2xl font-semibold text-center text-card-foreground">
-          Sign In
-        </h1>
-        {error && (
-          <div className="p-3 rounded-lg text-sm bg-destructive/10 text-destructive">
-            {error}
+    <div className="min-h-screen flex items-center justify-center bg-[#fafafa]">
+      <div className="w-full max-w-sm">
+        {/* Logo */}
+        <div className="flex flex-col items-center mb-8 gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#171717]">
+            <HardDrive className="h-5 w-5 text-white" />
           </div>
-        )}
-        <div className="space-y-4">
-          <input
-            id="login-username"
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            autoFocus
-            className="w-full px-4 py-3 rounded-lg text-sm outline-none transition-all bg-input text-foreground border border-transparent"
-          />
-          <input
-            id="login-password"
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg text-sm outline-none transition-all bg-input text-foreground border border-transparent"
-          />
+          <h1
+            className="text-xl font-semibold text-[#171717]"
+            style={{ letterSpacing: "-0.02em" }}
+          >
+            FileBrowser
+          </h1>
         </div>
-        <button
-          id="login-submit"
-          type="submit"
-          disabled={loading || !username}
-          className="w-full py-3 rounded-full font-bold text-sm transition-all disabled:opacity-45 disabled:cursor-not-allowed bg-primary text-primary-foreground"
+
+        {/* Card */}
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white rounded-lg p-8 space-y-4"
+          style={{ boxShadow: "rgba(0,0,0,0.08) 0px 0px 0px 1px, rgba(0,0,0,0.04) 0px 2px 8px" }}
         >
-          {loading ? "Signing in…" : "Sign In"}
-        </button>
-      </form>
+          <p className="text-sm text-[#666666] text-center mb-6">
+            Sign in to your account
+          </p>
+
+          {error && (
+            <div
+              className="p-3 rounded-md text-sm text-[#ff5b4f]"
+              style={{ backgroundColor: "rgba(255, 91, 79, 0.08)", border: "1px solid rgba(255, 91, 79, 0.2)" }}
+            >
+              {error}
+            </div>
+          )}
+
+          <div className="space-y-3">
+            <input
+              id="login-username"
+              type="text"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              autoFocus
+              className="w-full px-3 h-9 rounded-md text-sm bg-[#fafafa] text-[#171717] placeholder:text-[#666666] outline-none transition-all"
+              style={inputStyle}
+              onFocus={inputFocusHandler}
+              onBlur={inputBlurHandler}
+            />
+            <input
+              id="login-password"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-3 h-9 rounded-md text-sm bg-[#fafafa] text-[#171717] placeholder:text-[#666666] outline-none transition-all"
+              style={inputStyle}
+              onFocus={inputFocusHandler}
+              onBlur={inputBlurHandler}
+            />
+          </div>
+
+          <button
+            id="login-submit"
+            type="submit"
+            disabled={loading || !username}
+            className="w-full h-9 rounded-md bg-[#171717] text-white text-sm font-medium hover:bg-[#333333] transition-colors disabled:opacity-40 disabled:cursor-not-allowed mt-2"
+          >
+            {loading ? "Signing in…" : "Sign In"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

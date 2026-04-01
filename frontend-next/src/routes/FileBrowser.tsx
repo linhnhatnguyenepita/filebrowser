@@ -93,28 +93,28 @@ export default function FileBrowser() {
           onNewFolder={() => openDialog("newFolder")}
         />
 
-        <main className="flex-1 overflow-auto p-4">
+        <main className="flex-1 overflow-auto p-6">
           {loading ? (
             <div
-              className="flex items-center justify-center h-full text-muted-foreground"
+              className="flex items-center justify-center h-full text-[#666666]"
             >
               Loading…
             </div>
           ) : searchLoading ? (
             <div
-              className="flex items-center justify-center h-full text-muted-foreground"
+              className="flex items-center justify-center h-full text-[#666666]"
             >
               Searching…
             </div>
           ) : searchError ? (
             <div
-              className="flex items-center justify-center h-full text-muted-foreground"
+              className="flex items-center justify-center h-full text-[#666666]"
             >
               Search failed: {searchError}
             </div>
           ) : searchQuery && searchResults.length === 0 ? (
             <div
-              className="flex items-center justify-center h-full text-muted-foreground"
+              className="flex items-center justify-center h-full text-[#666666]"
             >
               No results for &ldquo;{searchQuery}&rdquo;
             </div>

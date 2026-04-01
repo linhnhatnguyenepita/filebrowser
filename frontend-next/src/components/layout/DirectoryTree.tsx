@@ -47,12 +47,15 @@ function TreeNodeItem({
   return (
     <div>
       <div
-        className={`flex items-center gap-1 rounded-lg cursor-pointer select-none transition-colors py-2 pr-3 ${
-          isActive
-            ? "bg-secondary text-foreground font-medium"
-            : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
-        }`}
-        style={{ paddingLeft: `${depth * 12 + 10}px` }}
+        className="flex items-center gap-1 rounded-md cursor-pointer select-none transition-colors py-2 pr-3"
+        style={{
+          paddingLeft: `${depth * 12 + 10}px`,
+          backgroundColor: isActive ? "#ffffff" : undefined,
+          color: isActive ? "#171717" : "#666666",
+          boxShadow: isActive ? "rgba(0, 0, 0, 0.08) 0px 0px 0px 1px" : undefined,
+        }}
+        onMouseEnter={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.backgroundColor = "#ffffff"; }}
+        onMouseLeave={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.backgroundColor = ""; }}
         onClick={() => {
           onNavigate(node.path);
           onToggle(node.path);
@@ -89,6 +92,7 @@ function TreeNodeItem({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            color: "#0a72ef",
           }}
         >
           {node.isExpanded ? <FolderOpen size={16} /> : <Folder size={16} />}

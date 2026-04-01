@@ -13,7 +13,6 @@ export default function StatusBar() {
   const fileCount = totalCount - folderCount;
 
   const handleDownloadSelected = () => {
-    // Download each selected file individually
     const selectedItems = items.filter((item) => selected.has(item.name));
     for (const item of selectedItems) {
       if (item.type !== "directory") {
@@ -28,79 +27,70 @@ export default function StatusBar() {
 
   return (
     <div
-      className="flex items-center justify-between px-4 shrink-0 bg-background border-t border-border text-muted-foreground"
-      style={{ height: "40px", fontSize: "12px" }}
+      className="flex items-center justify-between px-6 shrink-0 bg-white"
+      style={{ height: "40px", boxShadow: "rgba(0, 0, 0, 0.08) 0px -1px 0px 0px" }}
     >
       {/* Left: item counts */}
-      <div className="flex items-center gap-3">
-        {selectionCount > 0 ? (
-          <span className="text-foreground">
-            {selectionCount} selected
-          </span>
-        ) : (
+      <div className="flex items-center gap-4 text-xs text-[#666666]">
+        <span className="font-mono">{folderCount} folder{folderCount !== 1 ? "s" : ""}</span>
+        <span style={{ color: "#ebebeb" }}>·</span>
+        <span className="font-mono">{fileCount} file{fileCount !== 1 ? "s" : ""}</span>
+        {path && path !== "/" && (
           <>
-            <span>{fileCount} file{fileCount !== 1 ? "s" : ""}</span>
-            {folderCount > 0 && (
-              <span>{folderCount} folder{folderCount !== 1 ? "s" : ""}</span>
-            )}
+            <span style={{ color: "#ebebeb" }}>·</span>
+            <span
+              className="font-mono truncate max-w-[200px] hidden sm:block"
+              title={path}
+            >
+              {path}
+            </span>
           </>
         )}
-
-        {/* Path */}
-        <span
-          className="truncate max-w-[200px] hidden sm:block"
-          style={{ opacity: 0.6 }}
-          title={path}
-        >
-          {path}
-        </span>
       </div>
 
-      {/* Right: bulk actions (only visible when items are selected) */}
-      {selectionCount > 0 && (
-        <div className="flex items-center gap-1">
-          {/* Download (files only) */}
-          <ActionButton
-            onClick={handleDownloadSelected}
-            title="Download selected"
-            icon={<Download size={13} />}
-            label="Download"
-          />
+      {/* Right: selection info + bulk actions */}
+      <div className="flex items-center gap-2">
+        {selectionCount > 0 && (
+          <>
+            {/* Bulk action buttons */}
+            <ActionButton
+              onClick={handleDownloadSelected}
+              title="Download selected"
+              icon={<Download size={12} />}
+              label="Download"
+            />
+            <ActionButton
+              onClick={() => openDialog("move")}
+              title="Move selected"
+              icon={<Move size={12} />}
+              label="Move"
+            />
+            <ActionButton
+              onClick={() => openDialog("copy")}
+              title="Copy selected"
+              icon={<Copy size={12} />}
+              label="Copy"
+            />
+            <ActionButton
+              onClick={() => openDialog("delete")}
+              title="Delete selected"
+              icon={<Trash2 size={12} />}
+              label="Delete"
+              danger
+            />
 
-          {/* Move */}
-          <ActionButton
-            onClick={() => openDialog("move")}
-            title="Move selected"
-            icon={<Move size={13} />}
-            label="Move"
-          />
-
-          {/* Copy */}
-          <ActionButton
-            onClick={() => openDialog("copy")}
-            title="Copy selected"
-            icon={<Copy size={13} />}
-            label="Copy"
-          />
-
-          {/* Delete */}
-          <ActionButton
-            onClick={() => openDialog("delete")}
-            title="Delete selected"
-            icon={<Trash2 size={13} />}
-            label="Delete"
-            danger
-          />
-
-          {/* Clear selection */}
-          <button
-            onClick={clearSelection}
-            className="ml-2 px-2 py-1 rounded-md text-sm transition-colors text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
-          >
-            Clear
-          </button>
-        </div>
-      )}
+            {/* Selection pill */}
+            <span
+              className="rounded-full px-2.5 py-1 text-xs font-medium font-mono cursor-pointer hover:opacity-80 transition-opacity"
+              style={{ backgroundColor: "#ebf5ff", color: "#0068d6" }}
+              onClick={clearSelection}
+              title="Clear selection"
+            >
+              {selectionCount} selected ×
+            </span>
+          </>
+        )}
+      </div>
     </div>
   );
 }
@@ -117,10 +107,10 @@ function ActionButton({ onClick, title, icon, label, danger }: ActionButtonProps
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-1 px-2 py-1 rounded-md text-sm font-medium transition-colors ${
+      className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-colors ${
         danger
-          ? "text-destructive hover:bg-destructive/10"
-          : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
+          ? "text-[#ff5b4f] hover:bg-[#fff5f5]"
+          : "text-[#666666] hover:bg-[#fafafa] hover:text-[#171717]"
       }`}
       title={title}
       aria-label={title}
