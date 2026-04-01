@@ -40,21 +40,15 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
       className="flex flex-col shrink-0 bg-card border-r border-border"
       style={{ width: "360px" }}
     >
-      {/* App title */}
-      <div
-        className="flex items-center gap-3 px-4 shrink-0 border-b border-border"
-        style={{ height: "52px" }}
-      >
-        <HardDrive
-          size={24}
-          className="shrink-0"
-          style={{ width: "24px", height: "24px" }}
-        />
-        <span
-          className="font-semibold text-lg truncate text-foreground"
-        >
-          FileBrowser
-        </span>
+      {/* Brand header */}
+      <div className="flex items-center gap-3 px-4 border-b border-border shrink-0" style={{ height: "52px" }}>
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary shrink-0">
+          <HardDrive className="h-5 w-5 text-primary-foreground" />
+        </div>
+        <div>
+          <h1 className="font-semibold text-foreground">FileBrowser</h1>
+          <p className="text-xs text-muted-foreground">File Manager</p>
+        </div>
       </div>
 
       {/* Source selector */}
@@ -62,47 +56,30 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
         <div className="relative">
           <button
             onClick={() => setSourceDropdownOpen((o) => !o)}
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-md font-medium transition-colors border border-border bg-background text-foreground hover:bg-accent"
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors bg-secondary border border-border text-foreground hover:bg-secondary/80"
           >
-            <HardDrive
-              size={18}
-              className="shrink-0"
-              style={{ width: "18px", height: "18px" }}
-            />
-            <span
-              className="flex-1 text-left truncate"
-              style={{ fontSize: "16px", fontWeight: 700 }}
-            >
+            <HardDrive className="h-4 w-4 shrink-0" />
+            <span className="flex-1 text-left truncate font-semibold">
               {activeSource || "default"}
             </span>
             {sourceNames.length > 1 && (
               <ChevronDown
-                size={12}
-                className="shrink-0 transition-transform"
-                style={{
-                  transform: sourceDropdownOpen ? "rotate(180deg)" : "rotate(0deg)",
-                }}
+                className={`h-3 w-3 shrink-0 transition-transform ${sourceDropdownOpen ? "rotate-180" : ""}`}
               />
             )}
           </button>
 
-          {/* Source dropdown */}
           {sourceDropdownOpen && sourceNames.length > 1 && (
-            <div
-              className="absolute left-0 right-0 top-full mt-1 rounded-lg overflow-hidden z-50 bg-card border border-border shadow-md"
-            >
+            <div className="absolute left-0 right-0 top-full mt-1 rounded-lg overflow-hidden z-50 bg-card border border-border shadow-md">
               {sourceNames.map((name) => (
                 <button
                   key={name}
                   onClick={() => handleSourceSelect(name)}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-md transition-colors hover:bg-accent"
-                  style={{
-                    color: name === activeSource ? "var(--foreground)" : "var(--muted-foreground)",
-                    background: name === activeSource ? "var(--accent)" : "transparent",
-                    textAlign: "left",
-                  }}
+                  className={`w-full flex items-center gap-2 px-3 py-2 text-sm transition-colors hover:bg-secondary/50 text-left ${
+                    name === activeSource ? "bg-secondary text-foreground" : "text-muted-foreground"
+                  }`}
                 >
-                  <HardDrive size={12} />
+                  <HardDrive className="h-3 w-3 shrink-0" />
                   {name}
                 </button>
               ))}

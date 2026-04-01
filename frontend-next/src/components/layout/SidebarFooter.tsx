@@ -26,16 +26,16 @@ export default function SidebarFooter({ activeTab, onTabChange }: SidebarFooterP
   const initial = user?.username?.[0]?.toUpperCase() ?? "U";
 
   return (
-    <div className="px-3 py-2 shrink-0 border-t border-border space-y-1.5">
+    <div className="px-3 py-3 shrink-0 border-t border-border space-y-1">
       {/* User identity pill */}
-      <div className="flex items-center gap-2 px-4 py-3 rounded-lg bg-muted/50">
-        <div className="size-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold shrink-0">
+      <div className="flex items-center gap-3 px-3 py-3 rounded-xl bg-secondary/50">
+        <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold shrink-0">
           {initial}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-md font-medium truncate text-foreground">{user?.username ?? "User"}</p>
+          <p className="text-sm font-medium truncate text-foreground">{user?.username ?? "User"}</p>
           {user?.permissions?.admin && (
-            <p className="text-[10px] text-muted-foreground">Admin</p>
+            <p className="text-xs text-muted-foreground">Admin</p>
           )}
         </div>
       </div>
@@ -43,13 +43,13 @@ export default function SidebarFooter({ activeTab, onTabChange }: SidebarFooterP
       {/* Settings */}
       <button
         onClick={() => onTabChange(activeTab === "settings" ? "none" : "settings")}
-        className={`w-full flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+        className={`w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
           activeTab === "settings"
-            ? "bg-background text-foreground shadow-xs"
-            : "text-muted-foreground hover:bg-muted hover:text-foreground"
+            ? "bg-secondary text-foreground"
+            : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
         }`}
       >
-        <Settings size={12} />
+        <Settings size={16} />
         Settings
       </button>
 
@@ -57,10 +57,10 @@ export default function SidebarFooter({ activeTab, onTabChange }: SidebarFooterP
       <button
         onClick={handleLogout}
         disabled={loggingOut}
-        className="w-full flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-colors disabled:opacity-50"
+        className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-muted-foreground hover:bg-secondary/50 hover:text-foreground disabled:opacity-50"
       >
-        <LogOut size={12} />
-        Logout
+        <LogOut size={16} />
+        {loggingOut ? "Logging out…" : "Logout"}
       </button>
     </div>
   );

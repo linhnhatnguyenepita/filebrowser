@@ -47,16 +47,12 @@ function TreeNodeItem({
   return (
     <div>
       <div
-        className="flex items-center gap-1 rounded cursor-pointer select-none transition-colors hover:bg-accent"
-        style={{
-          paddingLeft: `${depth * 12 + 10}px`,
-          paddingRight: "10px",
-          paddingTop: "8px",
-          paddingBottom: "8px",
-          background: isActive ? "var(--accent)" : "transparent",
-          color: isActive ? "var(--foreground)" : "var(--muted-foreground)",
-          fontWeight: isActive ? 500 : 400,
-        }}
+        className={`flex items-center gap-1 rounded-lg cursor-pointer select-none transition-colors py-2 pr-3 ${
+          isActive
+            ? "bg-secondary text-foreground font-medium"
+            : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
+        }`}
+        style={{ paddingLeft: `${depth * 12 + 10}px` }}
         onClick={() => {
           onNavigate(node.path);
           onToggle(node.path);
@@ -95,7 +91,7 @@ function TreeNodeItem({
             justifyContent: "center",
           }}
         >
-          {node.isExpanded ? <FolderOpen size={20} /> : <Folder size={20} />}
+          {node.isExpanded ? <FolderOpen size={16} /> : <Folder size={16} />}
         </span>
 
         {/* Folder name */}
