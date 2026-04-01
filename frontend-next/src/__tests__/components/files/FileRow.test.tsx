@@ -1,0 +1,67 @@
+import { describe, it, expect } from "vitest";
+import { render, screen } from "@testing-library/react";
+import FileRow from "frontend-next/src/components/files/FileRow";
+
+describe("FileRow — folder count in size column", () => {
+  it("shows '{n} items' for a folder with children", () => {
+    const folder = {
+      name: "Documents",
+      size: 0,
+      modified: "2026-04-01T00:00:00Z",
+      type: "directory",
+      hidden: false,
+      hasPreview: false,
+      isShared: false,
+      path: "/Documents",
+      count: 12,
+    };
+    render(<FileRow item={folder} selected={false} onNavigate={() => {}} />);
+    expect(screen.getByText("12 items")).toBeInTheDocument();
+  });
+
+  it("shows '1 item' for a folder with a single child", () => {
+    const folder = {
+      name: "temp",
+      size: 0,
+      modified: "2026-04-01T00:00:00Z",
+      type: "directory",
+      hidden: false,
+      hasPreview: false,
+      isShared: false,
+      path: "/temp",
+      count: 1,
+    };
+    render(<FileRow item={folder} selected={false} onNavigate={() => {}} />);
+    expect(screen.getByText("1 item")).toBeInTheDocument();
+  });
+
+  it("shows nothing for a folder when count is missing (not em-dash)", () => {
+    const folder = {
+      name: "empty",
+      size: 0,
+      modified: "2026-04-01T00:00:00Z",
+      type: "directory",
+      hidden: false,
+      hasPreview: false,
+      isShared: false,
+      path: "/empty",
+    };
+    render(<FileRow item={folder} selected={false} onNavigate={() => {}} />);
+    expect(screen.queryByText(/items?/)).not.toBeInTheDocument();
+  });
+
+  it("still shows formatted size for files", () => {
+    const file = {
+      name: "notes.pdf",
+      size: 4 * 1024,
+      modified: "2026-04-01T00:00:00Z",
+      type: "application/pdf",
+      hidden: false,
+      hasPreview: false,
+      isShared: false,
+      path: "/notes.pdf",
+    };
+    render(<FileRow item={file} selected={false} onNavigate={() => {}} />);
+    expect(screen.getByText("4 KB")).toBeInTheDocument();
+  });
+});
