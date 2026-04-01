@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { useUIStore } from "@/lib/stores/ui-store";
 import { useFileStore } from "@/lib/stores/file-store";
+import { Button } from "@/components/ui/button";
 import Breadcrumbs from "./Breadcrumbs";
 
 interface HeaderProps {
@@ -57,30 +58,21 @@ export default function Header({ onNavigate, onUpload, onNewFolder }: HeaderProp
   }, []);
 
   return (
-    <header
-      className="flex items-center gap-3 px-4 pt-2 pb-2 shrink-0 bg-background border-b border-border"
-    >
+    <header className="flex items-center gap-3 px-4 py-3 shrink-0 bg-background border-b border-border">
       {/* Breadcrumbs — left */}
       <div className="flex-1 min-w-0">
         <Breadcrumbs path={path} onNavigate={onNavigate} />
       </div>
 
       {/* Search input — center */}
-      <div
-        className="relative flex items-center"
-        style={{ width: "280px", flexShrink: 0 }}
-      >
-        <Search
-          size={14}
-          className="absolute left-3 pointer-events-none text-muted-foreground"
-        />
+      <div className="relative flex items-center" style={{ width: "280px", flexShrink: 0 }}>
+        <Search size={14} className="absolute left-3 pointer-events-none text-muted-foreground" />
         <input
           type="text"
           placeholder="Search files…"
           value={inputValue}
           onChange={(e) => handleSearchChange(e.target.value)}
-          className="w-full rounded-lg text-sm outline-none transition-all bg-input text-foreground border border-transparent focus:border-foreground px-8"
-          style={{ paddingTop: "6px", paddingBottom: "6px" }}
+          className="w-full rounded-lg text-sm bg-secondary border-0 text-foreground placeholder:text-muted-foreground pl-9 pr-8 py-2 outline-none focus:ring-2 focus:ring-primary/50 transition-all"
         />
         {searchLoading ? (
           <span className="absolute right-2 flex items-center animate-spin text-muted-foreground">
@@ -100,52 +92,41 @@ export default function Header({ onNavigate, onUpload, onNewFolder }: HeaderProp
       {/* Action buttons — right */}
       <div className="flex items-center gap-2 shrink-0">
         {/* View mode toggle */}
-        <button
-          onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
-          className="p-2 rounded-lg transition-colors hover:bg-accent"
-          style={{
-            color: viewMode === "grid" ? "var(--foreground)" : "var(--muted-foreground)",
-          }}
-          title={viewMode === "grid" ? "Switch to list view" : "Switch to grid view"}
-          aria-label={
-            viewMode === "grid" ? "Switch to list view" : "Switch to grid view"
-          }
-        >
-          {viewMode === "grid" ? <List size={16} /> : <LayoutGrid size={16} />}
-        </button>
+        <div className="flex items-center gap-1 rounded-lg bg-secondary p-1">
+          <Button
+            variant={viewMode === "grid" ? "default" : "ghost"}
+            size="icon-sm"
+            onClick={() => setViewMode("grid")}
+            title="Grid view"
+            aria-label="Grid view"
+          >
+            <LayoutGrid size={15} />
+          </Button>
+          <Button
+            variant={viewMode === "list" ? "default" : "ghost"}
+            size="icon-sm"
+            onClick={() => setViewMode("list")}
+            title="List view"
+            aria-label="List view"
+          >
+            <List size={15} />
+          </Button>
+        </div>
 
         {/* Divider */}
-        <div
-          className="mx-1"
-          style={{
-            width: "1px",
-            height: "20px",
-            background: "var(--border)",
-            opacity: 0.5,
-          }}
-        />
+        <div className="w-px h-5 bg-border opacity-50 mx-1" />
 
         {/* Upload */}
-        <button
-          onClick={onUpload}
-          className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors bg-foreground text-background hover:opacity-90"
-          title="Upload files"
-          aria-label="Upload files"
-        >
-          <Upload size={15} />
+        <Button variant="outline" size="sm" onClick={onUpload} aria-label="Upload files">
+          <Upload size={14} />
           Upload
-        </button>
+        </Button>
 
         {/* New folder */}
-        <button
-          onClick={onNewFolder}
-          className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors bg-foreground text-background hover:opacity-90"
-          title="New folder"
-          aria-label="New folder"
-        >
-          <FolderPlus size={15} />
+        <Button variant="outline" size="sm" onClick={onNewFolder} aria-label="New folder">
+          <FolderPlus size={14} />
           New folder
-        </button>
+        </Button>
       </div>
     </header>
   );

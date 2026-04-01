@@ -29,7 +29,7 @@ export default function StatusBar() {
   return (
     <div
       className="flex items-center justify-between px-4 shrink-0 bg-background border-t border-border text-muted-foreground"
-      style={{ height: "36px", fontSize: "12px" }}
+      style={{ height: "40px", fontSize: "12px" }}
     >
       {/* Left: item counts */}
       <div className="flex items-center gap-3">
@@ -95,7 +95,7 @@ export default function StatusBar() {
           {/* Clear selection */}
           <button
             onClick={clearSelection}
-            className="ml-2 px-2 py-0.5 rounded text-sm transition-colors text-muted-foreground hover:text-foreground"
+            className="ml-2 px-2 py-1 rounded-md text-sm transition-colors text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
           >
             Clear
           </button>
@@ -117,23 +117,11 @@ function ActionButton({ onClick, title, icon, label, danger }: ActionButtonProps
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-1 px-2 py-0.5 rounded-md text-sm transition-colors"
-      style={{
-        color: danger ? "var(--destructive)" : "var(--muted-foreground)",
-        background: "transparent",
-      }}
-      onMouseEnter={(e) => {
-        (e.currentTarget as HTMLButtonElement).style.background = "var(--accent)";
-        (e.currentTarget as HTMLButtonElement).style.color = danger
-          ? "var(--destructive)"
-          : "var(--foreground)";
-      }}
-      onMouseLeave={(e) => {
-        (e.currentTarget as HTMLButtonElement).style.background = "transparent";
-        (e.currentTarget as HTMLButtonElement).style.color = danger
-          ? "var(--destructive)"
-          : "var(--muted-foreground)";
-      }}
+      className={`flex items-center gap-1 px-2 py-1 rounded-md text-sm font-medium transition-colors ${
+        danger
+          ? "text-destructive hover:bg-destructive/10"
+          : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
+      }`}
       title={title}
       aria-label={title}
     >
