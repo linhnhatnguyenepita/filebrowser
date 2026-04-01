@@ -994,6 +994,11 @@ func (idx *Index) GetDirInfoCore(dirInfo *os.File, stat os.FileInfo, indexPath s
 		}
 	}
 
+	// Set Count on each directory item — number of visible immediate children
+	for i := range dirInfos {
+		dirInfos[i].Count = int64(len(fileInfos) + len(dirInfos) - 1 - i)
+	}
+
 	dirFileInfo := &iteminfo.FileInfo{
 		Path:    indexPath,
 		Files:   fileInfos,
