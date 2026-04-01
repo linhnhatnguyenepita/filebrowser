@@ -230,12 +230,12 @@ function PickerNodeItem({
   return (
     <div>
       <div
-        className="flex items-center gap-1 rounded cursor-pointer select-none text-sm py-1 px-1 transition-colors hover:bg-accent"
-        style={{
-          paddingLeft: `${depth * 12 + 4}px`,
-          background: isSelected ? "var(--accent)" : "transparent",
-          color: isSelected ? "var(--foreground)" : "var(--muted-foreground)",
-        }}
+        className={`flex items-center gap-1 rounded-lg cursor-pointer select-none text-sm py-1.5 px-2 transition-colors ${
+          isSelected
+            ? "border border-primary/50 bg-primary/5 text-foreground"
+            : "text-muted-foreground hover:bg-secondary/50 hover:text-foreground"
+        }`}
+        style={{ paddingLeft: `${depth * 12 + 8}px` }}
         onClick={() => onSelect(node.path)}
       >
         <span

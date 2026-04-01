@@ -161,7 +161,7 @@ export default function UploadDialog({ open, onClose }: UploadDialogProps) {
 
         {/* Drop zone */}
         <div
-          className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 text-sm transition-colors border-border text-muted-foreground"
+          className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border bg-secondary/30 p-6 text-sm text-muted-foreground transition-colors cursor-pointer hover:border-primary/50 hover:bg-primary/5"
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
@@ -186,7 +186,7 @@ export default function UploadDialog({ open, onClose }: UploadDialogProps) {
             {uploads.map((upload, i) => (
               <div
                 key={`${upload.file.name}-${i}`}
-                className="flex items-center gap-2 text-sm"
+                className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary/50 text-sm"
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
@@ -202,17 +202,17 @@ export default function UploadDialog({ open, onClose }: UploadDialogProps) {
                   </div>
                   {/* Progress bar */}
                   {upload.status === "uploading" && (
-                    <div
-                      className="mt-1 h-1 w-full rounded-full overflow-hidden bg-muted"
-                    >
                       <div
-                        className="h-full rounded-full transition-all bg-foreground"
-                        style={{ width: `${upload.progress}%` }}
-                      />
-                    </div>
+                        className="mt-1 h-1 w-full rounded-full overflow-hidden bg-muted"
+                      >
+                        <div
+                          className="h-full rounded-full transition-all bg-primary"
+                          style={{ width: `${upload.progress}%` }}
+                        />
+                      </div>
                   )}
                   {upload.status === "done" && (
-                    <span className="text-sm text-green-600">Done</span>
+                    <span className="text-sm text-primary">Done</span>
                   )}
                   {(upload.status === "error" ||
                     upload.status === "conflict") && (
