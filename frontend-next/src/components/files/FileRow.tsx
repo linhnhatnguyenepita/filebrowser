@@ -1,12 +1,21 @@
 import { useRef, useCallback } from "react";
+import { MoreHorizontal, Download, Pencil, FolderInput, Copy, Trash2 } from "lucide-react";
 import type { FileInfo } from "@/lib/api/resources";
 import { getDownloadURL } from "@/lib/api/resources";
 import { useFileStore } from "@/lib/stores/file-store";
-import { TableRow, TableCell } from "@/components/ui/table";
+import { useUIStore } from "@/lib/stores/ui-store";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import FileIcon from "./FileIcon";
 import { isPreviewable } from "@/lib/utils/preview";
+import { cn } from "@/lib/utils";
 
-const CLICK_DELAY = 250; // ms
+const CLICK_DELAY = 250;
 
 function formatSize(bytes: number): string {
   if (bytes === 0) return "0 B";
@@ -27,13 +36,6 @@ function formatDate(iso: string): string {
   });
 }
 
-function formatType(type: string): string {
-  if (type === "directory") return "Folder";
-  // "image/jpeg" → "JPEG"
-  const sub = type.split("/").pop() || type;
-  return sub.replace(/^x-/, "").toUpperCase();
-}
-
 interface FileRowProps {
   item: FileInfo;
   onNavigate: (path: string) => void;
@@ -41,6 +43,7 @@ interface FileRowProps {
 
 export default function FileRow({ item, onNavigate }: FileRowProps) {
   const { selected, toggleSelect, source, setPreviewFile } = useFileStore();
+  const { openDialog } = useUIStore();
   const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isSelected = selected.has(item.name);
   const isDir = item.type === "directory";
@@ -49,98 +52,127 @@ export default function FileRow({ item, onNavigate }: FileRowProps) {
     window.open(getDownloadURL(source, item.path), "_blank");
   }, [source, item]);
 
+  const ensureSelected = useCallback(() => {
+    if (!selected.has(item.name)) toggleSelect(item.name);
+  }, [selected, item.name, toggleSelect]);
+
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
       if (e.ctrlKey || e.metaKey) {
         toggleSelect(item.name);
         return;
       }
-
       if (isDir) {
-        if (clickTimer.current) {
-          clearTimeout(clickTimer.current);
-          clickTimer.current = null;
-        }
         onNavigate(item.path);
         return;
       }
-
-      // Non-previewable: download immediately
-      if (!isPreviewable(item.type)) {
-        if (clickTimer.current) {
-          clearTimeout(clickTimer.current);
-          clickTimer.current = null;
-        }
-        downloadFile();
-        return;
-      }
-
-      // Previewable: debounce to detect double-click
       if (clickTimer.current) {
         clearTimeout(clickTimer.current);
         clickTimer.current = null;
-        downloadFile();
+        if (isPreviewable(item.type)) {
+          setPreviewFile(item);
+        } else {
+          downloadFile();
+        }
       } else {
         clickTimer.current = setTimeout(() => {
           clickTimer.current = null;
-          setPreviewFile(item);
+          toggleSelect(item.name);
         }, CLICK_DELAY);
       }
     },
-    [isDir, item, onNavigate, toggleSelect, setPreviewFile, downloadFile, source]
+    [isDir, item, onNavigate, toggleSelect, setPreviewFile, downloadFile]
   );
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        if (e.shiftKey || !isPreviewable(item.type)) {
-          downloadFile();
-        } else {
+        if (isDir) {
+          onNavigate(item.path);
+        } else if (isPreviewable(item.type)) {
           setPreviewFile(item);
+        } else {
+          downloadFile();
         }
       }
     },
-    [item, setPreviewFile, downloadFile]
+    [isDir, item, onNavigate, setPreviewFile, downloadFile]
   );
 
   return (
-    <TableRow
+    <div
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="button"
       aria-label={`${item.name}${isDir ? " (folder)" : ""}`}
-      className="cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring mb-10"
-      data-state={isSelected ? "selected" : undefined}
-      style={{
-        background: isSelected ? "var(--accent)" : undefined,
-      }}
+      className={cn(
+        "grid grid-cols-[1fr_100px_140px_40px] items-center gap-4 px-4 py-3 cursor-pointer transition-colors",
+        "hover:bg-secondary/30",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        isSelected && "bg-primary/5"
+      )}
     >
-      <TableCell className="w-10 py-4 border-b">
-        <input
-          type="checkbox"
-          checked={isSelected}
-          onChange={() => toggleSelect(item.name)}
-          onClick={(e) => e.stopPropagation()}
-          className="w-3.5 h-3.5 accent-foreground cursor-pointer"
-        />
-      </TableCell>
-      <TableCell className="w-10 pr-2 border-b">
-        <FileIcon type={item.type} size={16} />
-      </TableCell>
-      <TableCell className="font-medium text-foreground min-w-0 truncate border-b text-md">
-        {item.name}
-      </TableCell>
-      <TableCell className="w-24 text-muted-foreground border-b">
+      {/* Name column: icon + name */}
+      <div className="flex items-center gap-3 min-w-0">
+        <FileIcon type={item.type} iconSize="sm" />
+        <span className="truncate font-medium text-foreground text-sm" title={item.name}>
+          {item.name}
+        </span>
+      </div>
+
+      {/* Size */}
+      <span className="text-sm text-muted-foreground">
         {isDir ? "\u2014" : formatSize(item.size)}
-      </TableCell>
-      <TableCell className="w-44 text-muted-foreground border-b">
+      </span>
+
+      {/* Modified */}
+      <span className="text-sm text-muted-foreground">
         {formatDate(item.modified)}
-      </TableCell>
-      <TableCell className="w-24 text-muted-foreground border-b">
-        {formatType(item.type)}
-      </TableCell>
-    </TableRow>
+      </span>
+
+      {/* Dots menu */}
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          className="shrink-0 rounded-[min(var(--radius-md),12px)] p-0 size-7 flex items-center justify-center cursor-pointer bg-transparent text-muted-foreground hover:bg-secondary/50 hover:text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          onClick={(e) => e.stopPropagation()}
+          aria-label="File actions"
+        >
+          <MoreHorizontal className="h-4 w-4" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          {isPreviewable(item.type) && (
+            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setPreviewFile(item); }}>
+              Open / Preview
+            </DropdownMenuItem>
+          )}
+          {!isDir && (
+            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); downloadFile(); }}>
+              <Download className="h-4 w-4" />
+              Download
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); ensureSelected(); openDialog("rename"); }}>
+            <Pencil className="h-4 w-4" />
+            Rename
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); ensureSelected(); openDialog("moveCopy"); }}>
+            <FolderInput className="h-4 w-4" />
+            Move
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); ensureSelected(); openDialog("moveCopy"); }}>
+            <Copy className="h-4 w-4" />
+            Copy
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem variant="destructive" onClick={(e) => { e.stopPropagation(); ensureSelected(); openDialog("delete"); }}>
+            <Trash2 className="h-4 w-4" />
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
   );
 }

@@ -1,11 +1,21 @@
-import { useRef, useCallback, useState } from "react";
+import { useRef, useCallback } from "react";
+import { MoreHorizontal, Download, Pencil, FolderInput, Copy, Trash2 } from "lucide-react";
 import type { FileInfo } from "@/lib/api/resources";
 import { getDownloadURL } from "@/lib/api/resources";
 import { useFileStore } from "@/lib/stores/file-store";
+import { useUIStore } from "@/lib/stores/ui-store";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import FileIcon from "./FileIcon";
 import { isPreviewable } from "@/lib/utils/preview";
+import { cn } from "@/lib/utils";
 
-const CLICK_DELAY = 250; // ms
+const CLICK_DELAY = 250;
 
 function formatSize(bytes: number): string {
   if (bytes === 0) return "0 B";
@@ -21,8 +31,8 @@ interface FileCardProps {
 
 export default function FileCard({ item, onNavigate }: FileCardProps) {
   const { selected, toggleSelect, source, setPreviewFile } = useFileStore();
+  const { openDialog } = useUIStore();
   const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [hovered, setHovered] = useState(false);
   const isSelected = selected.has(item.name);
   const isDir = item.type === "directory";
 
@@ -30,64 +40,77 @@ export default function FileCard({ item, onNavigate }: FileCardProps) {
     window.open(getDownloadURL(source, item.path), "_blank");
   }, [source, item]);
 
+  const ensureSelected = useCallback(() => {
+    if (!selected.has(item.name)) toggleSelect(item.name);
+  }, [selected, item.name, toggleSelect]);
+
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
       if (e.ctrlKey || e.metaKey) {
         toggleSelect(item.name);
         return;
       }
-
       if (isDir) {
-        if (clickTimer.current) {
-          clearTimeout(clickTimer.current);
-          clickTimer.current = null;
-        }
         onNavigate(item.path);
         return;
       }
-
-      // Non-previewable: download immediately
-      if (!isPreviewable(item.type)) {
-        if (clickTimer.current) {
-          clearTimeout(clickTimer.current);
-          clickTimer.current = null;
-        }
-        downloadFile();
-        return;
-      }
-
-      // Previewable: debounce to detect double-click
+      // Files: single-click selects, double-click previews/downloads
       if (clickTimer.current) {
         clearTimeout(clickTimer.current);
         clickTimer.current = null;
-        downloadFile();
+        if (isPreviewable(item.type)) {
+          setPreviewFile(item);
+        } else {
+          downloadFile();
+        }
       } else {
         clickTimer.current = setTimeout(() => {
           clickTimer.current = null;
-          setPreviewFile(item);
+          toggleSelect(item.name);
         }, CLICK_DELAY);
       }
     },
-    [isDir, item, onNavigate, toggleSelect, setPreviewFile, downloadFile, source]
+    [isDir, item, onNavigate, toggleSelect, setPreviewFile, downloadFile]
   );
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        if (e.shiftKey || !isPreviewable(item.type)) {
-          downloadFile();
-        } else {
+        if (isDir) {
+          onNavigate(item.path);
+        } else if (isPreviewable(item.type)) {
           setPreviewFile(item);
+        } else {
+          downloadFile();
         }
       }
     },
-    [item, setPreviewFile, downloadFile]
+    [isDir, item, onNavigate, setPreviewFile, downloadFile]
   );
 
-  const handleCheckbox = (e: React.MouseEvent) => {
+  const handleRename = (e: React.MouseEvent) => {
     e.stopPropagation();
-    toggleSelect(item.name);
+    ensureSelected();
+    openDialog("rename");
+  };
+
+  const handleMove = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    ensureSelected();
+    openDialog("moveCopy");
+  };
+
+  const handleCopy = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    ensureSelected();
+    openDialog("moveCopy");
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    ensureSelected();
+    openDialog("delete");
   };
 
   return (
@@ -97,43 +120,67 @@ export default function FileCard({ item, onNavigate }: FileCardProps) {
       tabIndex={0}
       role="button"
       aria-label={`${item.name}${isDir ? " (folder)" : ""}`}
-      className="border border-black/10 group relative flex items-center gap-4 rounded-lg py-4 px-3 cursor-pointer transition-colors hover:bg-[var(--secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      style={{
-        background: isSelected ? "var(--accent)" : hovered ? "var(--secondary)" : "transparent",
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      className={cn(
+        "group relative flex flex-col rounded-xl border border-border bg-card p-4 cursor-pointer text-left transition-all",
+        "hover:border-primary/50 hover:bg-secondary/30",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        isSelected && "border-primary bg-primary/5"
+      )}
     >
-      {/* Checkbox */}
-      <div
-        onClick={handleCheckbox}
-        className=""
-        style={{ opacity: isSelected ? 1 : undefined }}
-      >
-        <input
-          type="checkbox"
-          checked={isSelected}
-          readOnly
-          className="w-3.5 h-3.5 accent-foreground cursor-pointer"
-        />
+      {/* Icon + dots menu row */}
+      <div className="mb-3 flex items-start justify-between">
+        <FileIcon type={item.type} iconSize="lg" />
+
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            className="opacity-0 transition-opacity group-hover:opacity-100 shrink-0 rounded-[min(var(--radius-md),12px)] p-0 size-7 flex items-center justify-center cursor-pointer bg-transparent text-muted-foreground hover:bg-secondary/50 hover:text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            onClick={(e) => e.stopPropagation()}
+            aria-label="File actions"
+          >
+            <MoreHorizontal className="h-4 w-4" />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {isPreviewable(item.type) && (
+              <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setPreviewFile(item); }}>
+                Open / Preview
+              </DropdownMenuItem>
+            )}
+            {!isDir && (
+              <DropdownMenuItem onClick={(e) => { e.stopPropagation(); downloadFile(); }}>
+                <Download className="h-4 w-4" />
+                Download
+              </DropdownMenuItem>
+            )}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleRename}>
+              <Pencil className="h-4 w-4" />
+              Rename
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleMove}>
+              <FolderInput className="h-4 w-4" />
+              Move
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleCopy}>
+              <Copy className="h-4 w-4" />
+              Copy
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem variant="destructive" onClick={handleDelete}>
+              <Trash2 className="h-4 w-4" />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
-      <div className="p-4 bg-secondary rounded-lg">
-        <FileIcon type={item.type} size={18} />
-      </div>
+      {/* Name */}
+      <h3 className="mb-1 truncate font-medium text-foreground text-sm" title={item.name}>
+        {item.name}
+      </h3>
 
-      <div className="flex flex-col items-start justify-center gap-1">
-        <span
-          className="text-md text-center truncate w-full text-foreground font-medium"
-          title={item.name}
-        >
-          {item.name}
-        </span>
-        {!isDir && (
-          <span className="text-sm text-muted-foreground">
-            {formatSize(item.size)}
-          </span>
-        )}
+      {/* Meta */}
+      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        {!isDir && <span>{formatSize(item.size)}</span>}
       </div>
     </div>
   );
