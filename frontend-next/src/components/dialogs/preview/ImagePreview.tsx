@@ -77,7 +77,7 @@ export default function ImagePreview({ file }: ImagePreviewProps) {
 
   return (
     <div className="flex flex-col gap-0">
-      <div className="flex items-center justify-center bg-black/5 dark:bg-white/5 rounded-t-xl min-h-48 max-h-[80vh] overflow-hidden">
+      <div className="flex items-center justify-center bg-background rounded-t-xl min-h-48 max-h-[80vh] overflow-hidden">
         {blobUrl && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
@@ -91,7 +91,7 @@ export default function ImagePreview({ file }: ImagePreviewProps) {
         name={file.name}
         size={file.size}
         type={file.type}
-        extra={dimLabel ? <span className="text-white/60">{dimLabel}</span> : undefined}
+        extra={dimLabel ? <span className="text-muted-foreground">{dimLabel}</span> : undefined}
       />
     </div>
   );

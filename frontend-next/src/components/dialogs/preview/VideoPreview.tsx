@@ -61,7 +61,7 @@ export default function VideoPreview({ file }: VideoPreviewProps) {
   }
 
   return (
-    <div className="rounded-xl overflow-hidden bg-black flex items-center justify-center max-h-[80vh]">
+    <div className="rounded-xl overflow-hidden bg-secondary/50 flex items-center justify-center max-h-[80vh]">
       {blobUrl && (
         <video
           controls

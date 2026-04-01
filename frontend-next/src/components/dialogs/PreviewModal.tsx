@@ -49,8 +49,8 @@ export default function PreviewModal() {
         className="max-w-4xl w-full p-0 gap-0 overflow-hidden"
         showCloseButton
       >
-        <DialogHeader className="px-5 pt-5 pb-3 border-b">
-          <DialogTitle className="truncate text-base">{file.name}</DialogTitle>
+        <DialogHeader className="px-5 pt-4 pb-3 border-b border-border bg-card/80">
+          <DialogTitle className="truncate text-base font-semibold text-foreground">{file.name}</DialogTitle>
           <DialogDescription className="sr-only">
             Previewing {file.name}
           </DialogDescription>
