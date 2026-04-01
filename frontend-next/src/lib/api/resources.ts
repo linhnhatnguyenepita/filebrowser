@@ -10,6 +10,7 @@ export interface FileInfo {
   isShared: boolean;
   path: string;
   source?: string;
+  count?: number; // number of immediate children; present only for type === "directory"
 }
 
 export interface DirectoryResponse {
@@ -26,6 +27,7 @@ export interface DirectoryResponse {
 export interface ItemsResponse {
   files: string[];
   folders: string[];
+  folderCounts?: Record<string, number>; // count per folder name
 }
 
 export async function fetchDirectory(
