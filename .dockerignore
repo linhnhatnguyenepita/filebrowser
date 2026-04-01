@@ -7,6 +7,6 @@ backend/backend*
 backend/http/dist/**
 backend/vendor/**
 
-frontend/dist/**
-frontend/node_modules/**
-frontend/pkg/**
+frontend-next/dist/**
+frontend-next/node_modules/**
+frontend-next/pkg/**

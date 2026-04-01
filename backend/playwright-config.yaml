@@ -5,7 +5,7 @@ server:
   logging:
     - levels: "info|warning|debug|error"
   sources:
-    - path: "../frontend/playwright-files"
+    - path: "../frontend-next/tests/playwright-files"
       config:
         defaultEnabled: true
 userDefaults:
@@ -38,12 +38,12 @@ userDefaults:
     folder: true                         # show thumbnail preview image for folder files
   permissions:
     api: false                            # allow api access
-    admin: false                          # allow admin access
-    modify: false                         # allow modifying files
+    admin: true                          # allow admin access
+    modify: true                         # allow modifying files
     share: false                          # allow sharing files
     realtime: false                       # allow realtime updates
-    delete: false                         # allow deleting files
-    create: false                         # allow creating or uploading files
+    delete: true                         # allow deleting files
+    create: true                         # allow creating or uploading files
     download: true                        # allow downloading files
   disableUpdateNotifications: false       # disable update notifications banner for admin users
   deleteWithoutConfirming: false          # delete files without confirmation

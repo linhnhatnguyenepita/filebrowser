@@ -2,7 +2,7 @@ server:
   logging:
     - levels: "info|error|warning|debug"
   sources:
-    - path: "../frontend/tests/playwright-files"
+    - path: "../frontend-next/tests/playwright-files"
       config:
         defaultEnabled: true
         createUserDir: true

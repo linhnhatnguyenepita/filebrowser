@@ -18,12 +18,12 @@ func TestGetContent_UTF8Truncation(t *testing.T) {
 
 	// Navigate from backend/adapters/fs/files to the project root
 	// backend/adapters/fs/files -> backend/adapters/fs -> backend/adapters -> backend -> root
-	testFilePath := filepath.Join(cwd, "..", "..", "..", "..", "frontend", "tests", "playwright-files", "utf8-truncated.txt")
+	testFilePath := filepath.Join(cwd, "..", "..", "..", "..", "frontend-next", "tests", "playwright-files", "utf8-truncated.txt")
 
 	// Check if file exists, if not try alternative path
 	if _, err = os.Stat(testFilePath); os.IsNotExist(err) {
 		// Try from project root
-		testFilePath = filepath.Join("frontend", "tests", "playwright-files", "utf8-truncated.txt")
+		testFilePath = filepath.Join("frontend-next", "tests", "playwright-files", "utf8-truncated.txt")
 		if _, err = os.Stat(testFilePath); os.IsNotExist(err) {
 			t.Skipf("Test file not found at %s, skipping test", testFilePath)
 			return

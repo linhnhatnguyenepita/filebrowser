@@ -35,6 +35,22 @@ describe("FileCard — folder count", () => {
     expect(screen.getByText("1 item")).toBeInTheDocument();
   });
 
+  it("shows '0 item' for an empty folder", () => {
+    const folder = {
+      name: "empty",
+      size: 0,
+      modified: "2026-04-01T00:00:00Z",
+      type: "directory",
+      hidden: false,
+      hasPreview: false,
+      isShared: false,
+      path: "/empty",
+      count: 0,
+    };
+    render(<FileCard item={folder} selected={false} onNavigate={() => {}} />);
+    expect(screen.getByText("0 item")).toBeInTheDocument();
+  });
+
   it("shows nothing for a folder when count is missing", () => {
     const folder = {
       name: "empty",

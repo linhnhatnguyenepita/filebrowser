@@ -882,7 +882,7 @@ func GenerateYaml() {
 	setupMedia(true)
 	setupFrontend(true)
 
-	output := "../frontend/public/config.generated.yaml" // "output YAML file"
+	output := "../frontend-next/public/config.generated.yaml" // "output YAML file"
 
 	// Generate YAML with comments enabled, full config, and deprecated fields filtered
 	// Use multi-directory comment parsing to get comments from all packages

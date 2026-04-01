@@ -5,6 +5,12 @@ definitions:
         items:
           type: string
         type: array
+      folderCounts:
+        additionalProperties:
+          format: int64
+          type: integer
+        description: count per folder name; -1 if unreadable
+        type: object
       folders:
         items:
           type: string
@@ -395,6 +401,10 @@ definitions:
     type: object
   iteminfo.ExtendedItemInfo:
     properties:
+      count:
+        description: number of immediate children (for type=="directory"); -1 if not
+          available
+        type: integer
       hasPreview:
         description: whether the file has a thumbnail preview
         type: boolean
@@ -423,6 +433,10 @@ definitions:
     type: object
   iteminfo.FileInfo:
     properties:
+      count:
+        description: number of immediate children (for type=="directory"); -1 if not
+          available
+        type: integer
       files:
         description: files in the directory with optional metadata
         items:
@@ -460,6 +474,10 @@ definitions:
     type: object
   iteminfo.ItemInfo:
     properties:
+      count:
+        description: number of immediate children (for type=="directory"); -1 if not
+          available
+        type: integer
       hasPreview:
         description: whether the file has a thumbnail preview
         type: boolean

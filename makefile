@@ -26,7 +26,7 @@ setup:
 	cd backend && go get tool
 	cd backend/http && mkdir -p embed && touch embed/.gitignore
 	echo "installing npm requirements for frontend..."
-	cd frontend && npm i
+	cd frontend-next && npm i
 
 update:
 	cd backend && go get -u ./... && go mod tidy
@@ -48,7 +48,7 @@ build-backend:
 # New dev target with hot-reloading for frontend and backend
 dev: generate-docs
 	@echo "Starting dev servers... Press Ctrl+C to stop."
-	@cd frontend && DEV_BUILD=true npm run watch & \
+	@cd frontend-next && DEV_BUILD=true npm run watch & \
 	FRONTEND_PID=$$!; \
 	cd backend && export FILEBROWSER_DEVMODE=true && go tool air $$([ "$(OS)" = "Windows_NT" ] && echo "-c .air.windows.toml" || echo "") & \
 	BACKEND_PID=$$!; \
@@ -79,7 +79,7 @@ generate-docs:
 
 build-frontend:
 	@echo "Building frontend..."
-	cd frontend && npm run build
+	cd frontend-next && npm run build
 	@echo "✓ Frontend built successfully"
 
 lint-frontend:
@@ -133,7 +133,7 @@ screenshots: build-frontend
 	cd _docker && docker compose down && docker compose up --build local-playwright-screenshots
 	@if [ -d ../filebrowserDocs ]; then \
 		rm -rf ../filebrowserDocs/static/images/generated/; \
-		cp -r ./frontend/generated ../filebrowserDocs/static/images/; \
+		cp -r ./frontend-next/generated ../filebrowserDocs/static/images/; \
 		echo "Copied screenshots to ../filebrowserDocs/static/images/generated/"; \
 	fi
 

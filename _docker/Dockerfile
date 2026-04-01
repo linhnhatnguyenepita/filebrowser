@@ -14,13 +14,13 @@ RUN upx filebrowser
 
 FROM node:jod-slim AS nbuild
 WORKDIR /app
-COPY ./frontend/package.json ./
+COPY ./frontend-next/package.json ./
 RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates \
     && git config --global url."https://github.com/".insteadOf "git@github.com:" \
     && git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
 RUN npm i --maxsockets 1
-COPY  ./frontend/ ./
-RUN npm run build:docker
+COPY  ./frontend-next/ ./
+RUN npm run build
 
 FROM alpine:latest
 COPY --from=ffmpeg [ "/ffmpeg", "/ffprobe", "/usr/local/bin/" ]

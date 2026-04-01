@@ -4013,6 +4013,14 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "folderCounts": {
+                    "description": "count per folder name; -1 if unreadable",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                },
                 "folders": {
                     "type": "array",
                     "items": {
@@ -4565,6 +4573,10 @@ const docTemplate = `{
         "iteminfo.ExtendedItemInfo": {
             "type": "object",
             "properties": {
+                "count": {
+                    "description": "number of immediate children (for type==\"directory\"); -1 if not available",
+                    "type": "integer"
+                },
                 "hasPreview": {
                     "description": "whether the file has a thumbnail preview",
                     "type": "boolean"
@@ -4606,6 +4618,10 @@ const docTemplate = `{
         "iteminfo.FileInfo": {
             "type": "object",
             "properties": {
+                "count": {
+                    "description": "number of immediate children (for type==\"directory\"); -1 if not available",
+                    "type": "integer"
+                },
                 "files": {
                     "description": "files in the directory with optional metadata",
                     "type": "array",
@@ -4657,6 +4673,10 @@ const docTemplate = `{
         "iteminfo.ItemInfo": {
             "type": "object",
             "properties": {
+                "count": {
+                    "description": "number of immediate children (for type==\"directory\"); -1 if not available",
+                    "type": "integer"
+                },
                 "hasPreview": {
                     "description": "whether the file has a thumbnail preview",
                     "type": "boolean"
