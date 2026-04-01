@@ -128,9 +128,11 @@ export default function FileRow({ item, onNavigate, isLast }: FileRowProps) {
       {/* Size */}
       <span className="text-sm text-[#666666]">
         {isDir ? (
-          item.count != null
-            ? `${item.count} item${item.count === 1 || item.count === 0 ? "" : "s"}`
-            : ""
+          item.count != null && item.count > 0 ? (
+            `${item.count} item${item.count === 1 ? "" : "s"}`
+          ) : (
+            <span className="opacity-50">0 items</span>
+          )
         ) : (
           formatSize(item.size)
         )}

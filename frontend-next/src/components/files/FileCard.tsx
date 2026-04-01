@@ -165,9 +165,11 @@ export default function FileCard({ item, onNavigate }: FileCardProps) {
       {/* Meta */}
       <div className="flex items-center gap-1.5 text-xs text-[#666666]">
         {isDir ? (
-          item.count != null
-            ? <span>{item.count} item{item.count === 1 || item.count === 0 ? "" : "s"}</span>
-            : null
+          item.count != null && item.count > 0 ? (
+            <span>{item.count} item{item.count === 1 ? "" : "s"}</span>
+          ) : (
+            <span className="opacity-50">0 items</span>
+          )
         ) : (
           <span>{formatSize(item.size)}</span>
         )}
