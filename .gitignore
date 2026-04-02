@@ -23,7 +23,6 @@ frontend-next/tsconfig.tsbuildinfo
 /frontend-next/loginAuth.json
 /backend/vendor
 /backend/*.cov
-/backend/*test_config.yaml
 /backend/generated.yaml
 /backend/srv
 /backend/http/dist
