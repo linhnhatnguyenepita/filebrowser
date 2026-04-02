@@ -21,19 +21,11 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "../backend/http/dist",
+    outDir: "dist",
     rollupOptions: {
       input: {
         index: path.resolve(__dirname, "index.html"),
       },
-    },
-  },
-  experimental: {
-    renderBuiltUrl(filename, { hostType }) {
-      if (hostType === "html") {
-        return `{{ .htmlVars.staticURL }}/${filename}`;
-      }
-      return { relative: true };
     },
   },
 });
