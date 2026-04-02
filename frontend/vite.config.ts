@@ -17,6 +17,11 @@ export default defineConfig({
       "/api": {
         target: process.env.VITE_BACKEND_URL || "http://localhost:2818",
         changeOrigin: true,
+        configure: (proxy) => {
+          proxy.on("proxyReq", (proxyReq) => {
+            proxyReq.setHeader("X-Forwarded-Host", "localhost:5173");
+          });
+        },
       },
     },
   },
