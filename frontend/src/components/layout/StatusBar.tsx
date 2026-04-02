@@ -27,17 +27,17 @@ export default function StatusBar() {
 
   return (
     <div
-      className="flex items-center justify-between px-6 shrink-0 bg-white"
+      className="flex items-center justify-between px-6 shrink-0 bg-card dark:shadow-border"
       style={{ height: "40px", boxShadow: "rgba(0, 0, 0, 0.08) 0px -1px 0px 0px" }}
     >
       {/* Left: item counts */}
-      <div className="flex items-center gap-4 text-xs text-[#666666]">
+      <div className="flex items-center gap-4 text-xs text-muted-foreground">
         <span className="font-mono">{folderCount} folder{folderCount !== 1 ? "s" : ""}</span>
-        <span style={{ color: "#ebebeb" }}>·</span>
+        <span style={{ color: "var(--border)" }}>·</span>
         <span className="font-mono">{fileCount} file{fileCount !== 1 ? "s" : ""}</span>
         {path && path !== "/" && (
           <>
-            <span style={{ color: "#ebebeb" }}>·</span>
+            <span style={{ color: "var(--border)" }}>·</span>
             <span
               className="font-mono truncate max-w-[200px] hidden sm:block"
               title={path}
@@ -82,7 +82,7 @@ export default function StatusBar() {
             {/* Selection pill */}
             <span
               className="rounded-full px-2.5 py-1 text-xs font-medium font-mono cursor-pointer hover:opacity-80 transition-opacity"
-              style={{ backgroundColor: "#ebf5ff", color: "#0068d6" }}
+              style={{ backgroundColor: "var(--primary)", color: "var(--primary-foreground)" }}
               onClick={clearSelection}
               title="Clear selection"
             >
@@ -109,8 +109,8 @@ function ActionButton({ onClick, title, icon, label, danger }: ActionButtonProps
       onClick={onClick}
       className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-colors ${
         danger
-          ? "text-[#ff5b4f] hover:bg-[#fff5f5]"
-          : "text-[#666666] hover:bg-[#fafafa] hover:text-[#171717]"
+          ? "text-destructive hover:bg-destructive/10"
+          : "text-muted-foreground hover:bg-accent hover:text-foreground"
       }`}
       title={title}
       aria-label={title}

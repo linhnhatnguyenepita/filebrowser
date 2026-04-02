@@ -35,16 +35,16 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
 
   return (
     <aside
-      className="flex flex-col shrink-0 bg-[#fafafa]"
+      className="flex flex-col shrink-0 bg-sidebar"
       style={{ width: "260px", boxShadow: "rgba(0, 0, 0, 0.08) 1px 0px 0px 0px" }}
     >
       {/* Logo */}
       <div className="flex items-center gap-3 px-5 py-5 shrink-0">
-        <div className="flex h-8 w-8 items-center justify-center rounded-md bg-[#171717] shrink-0">
-          <HardDrive className="h-4 w-4 text-white" />
+        <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary shrink-0">
+          <HardDrive className="h-4 w-4 text-primary-foreground" />
         </div>
         <span
-          className="text-base font-semibold text-[#171717]"
+          className="text-base font-semibold text-foreground"
           style={{ letterSpacing: "-0.02em" }}
         >
           FileBrowser
@@ -57,7 +57,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
           <div className="relative">
             <button
               onClick={() => setSourceDropdownOpen((o) => !o)}
-              className="w-full flex items-center gap-2 h-9 px-3 rounded-md bg-[#171717] text-white text-sm font-medium hover:bg-[#333333] transition-colors"
+              className="w-full flex items-center gap-2 h-9 px-3 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
             >
               <HardDrive className="h-4 w-4 shrink-0" />
               <span className="flex-1 text-left truncate">{activeSource || "default"}</span>
@@ -68,7 +68,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
 
             {sourceDropdownOpen && (
               <div
-                className="absolute left-0 right-0 top-full mt-1 rounded-md overflow-hidden z-50 bg-white"
+                className="absolute left-0 right-0 top-full mt-1 rounded-md overflow-hidden z-50 bg-card dark:shadow-border"
                 style={{ boxShadow: "rgba(0,0,0,0.12) 0px 4px 16px, rgba(0,0,0,0.08) 0px 0px 0px 1px" }}
               >
                 {sourceNames.map((name) => (
@@ -76,8 +76,8 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
                     key={name}
                     onClick={() => handleSourceSelect(name)}
                     className={cn(
-                      "w-full flex items-center gap-2 px-3 py-2 text-sm text-left transition-colors hover:bg-[#fafafa]",
-                      name === activeSource ? "text-[#171717] font-medium" : "text-[#666666]"
+                      "w-full flex items-center gap-2 px-3 py-2 text-sm text-left transition-colors hover:bg-accent",
+                      name === activeSource ? "text-foreground font-medium" : "text-muted-foreground"
                     )}
                   >
                     <HardDrive className="h-3 w-3 shrink-0" />
@@ -88,7 +88,7 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
             )}
           </div>
         ) : (
-          <button className="w-full flex items-center justify-center gap-2 h-9 rounded-md bg-[#171717] text-white text-sm font-medium hover:bg-[#333333] transition-colors">
+          <button className="w-full flex items-center justify-center gap-2 h-9 rounded-md bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors">
             <Plus className="h-4 w-4" />
             New
           </button>

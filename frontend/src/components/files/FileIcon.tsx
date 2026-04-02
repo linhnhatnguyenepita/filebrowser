@@ -53,7 +53,7 @@ const typeIconMap: Array<[RegExp, IconConfig]> = [
 const fallbackConfig: IconConfig = {
   icon: File,
   bg: "rgba(0, 0, 0, 0.06)",
-  color: "#666666",
+  color: "var(--muted-foreground)",
 };
 
 function getIconConfig(mimeType: string): IconConfig {

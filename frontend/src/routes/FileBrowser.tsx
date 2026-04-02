@@ -96,25 +96,25 @@ export default function FileBrowser() {
         <main className="flex-1 overflow-auto p-6">
           {loading ? (
             <div
-              className="flex items-center justify-center h-full text-[#666666]"
+              className="flex items-center justify-center h-full text-muted-foreground"
             >
               Loading…
             </div>
           ) : searchLoading ? (
             <div
-              className="flex items-center justify-center h-full text-[#666666]"
+              className="flex items-center justify-center h-full text-muted-foreground"
             >
               Searching…
             </div>
           ) : searchError ? (
             <div
-              className="flex items-center justify-center h-full text-[#666666]"
+              className="flex items-center justify-center h-full text-muted-foreground"
             >
               Search failed: {searchError}
             </div>
           ) : searchQuery && searchResults.length === 0 ? (
             <div
-              className="flex items-center justify-center h-full text-[#666666]"
+              className="flex items-center justify-center h-full text-muted-foreground"
             >
               No results for &ldquo;{searchQuery}&rdquo;
             </div>

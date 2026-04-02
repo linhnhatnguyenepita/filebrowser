@@ -33,15 +33,15 @@ export default function SidebarFooter({ activeTab, onTabChange }: SidebarFooterP
   const initial = user?.username?.[0]?.toUpperCase() ?? "U";
 
   return (
-    <div className="shrink-0" style={{ borderTop: "1px solid #ebebeb" }}>
+    <div className="shrink-0" style={{ borderTop: "1px solid var(--border)" }}>
       {/* Storage indicator */}
-      <div className="px-4 py-3" style={{ borderBottom: "1px solid #ebebeb" }}>
+      <div className="px-4 py-3" style={{ borderBottom: "1px solid var(--border)" }}>
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-medium text-[#666666]">Storage</span>
-          <span className="text-xs text-[#666666] font-mono">3.4 MB / 100 GB</span>
+          <span className="text-xs font-medium text-muted-foreground">Storage</span>
+          <span className="text-xs text-muted-foreground font-mono">3.4 MB / 100 GB</span>
         </div>
-        <div className="h-1 overflow-hidden rounded-full bg-[#ebebeb]">
-          <div className="h-full w-[1%] rounded-full bg-[#171717]" />
+        <div className="h-1 overflow-hidden rounded-full bg-secondary">
+          <div className="h-full w-[1%] rounded-full bg-primary" />
         </div>
       </div>
 
@@ -49,18 +49,18 @@ export default function SidebarFooter({ activeTab, onTabChange }: SidebarFooterP
       <div className="p-3">
         <DropdownMenu>
           <DropdownMenuTrigger
-            className="flex w-full items-center gap-3 rounded-md p-2 transition-colors hover:bg-white text-left cursor-pointer bg-transparent border-0 outline-none"
+            className="flex w-full items-center gap-3 rounded-md p-2 transition-colors hover:bg-accent text-left cursor-pointer bg-transparent border-0 outline-none"
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#171717] text-white text-xs font-semibold shrink-0">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-semibold shrink-0">
               {initial}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-[#171717] truncate">{user?.username ?? "User"}</p>
-              <p className="text-xs text-[#666666]">
+              <p className="text-sm font-medium text-foreground truncate">{user?.username ?? "User"}</p>
+              <p className="text-xs text-muted-foreground">
                 {user?.permissions?.admin ? "Admin" : "Free Plan"}
               </p>
             </div>
-            <ChevronDown className="h-4 w-4 text-[#666666] shrink-0" />
+            <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52">
             <DropdownMenuItem

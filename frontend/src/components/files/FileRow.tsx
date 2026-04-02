@@ -108,17 +108,17 @@ export default function FileRow({ item, onNavigate, isLast }: FileRowProps) {
       aria-label={`${item.name}${isDir ? " (folder)" : ""}`}
       className={cn(
         "grid grid-cols-[1fr_100px_140px_40px] items-center gap-4 px-4 py-2.5 cursor-pointer transition-colors",
-        "hover:bg-[#fafafa]",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0070f3] focus-visible:ring-inset",
-        isSelected && "bg-[#ebf5ff]"
+        "hover:bg-accent",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset",
+        isSelected && "bg-primary/10 dark:bg-primary/20"
       )}
-      style={!isLast ? { borderBottom: "1px solid #ebebeb" } : {}}
+      style={!isLast ? { borderBottom: "1px solid var(--border)" } : {}}
     >
       {/* Name column */}
       <div className="flex items-center gap-3 min-w-0">
         <FileIcon type={item.type} iconSize="sm" />
         <span
-          className="truncate text-sm font-medium text-[#171717]"
+          className="truncate text-sm font-medium text-foreground"
           title={item.name}
         >
           {item.name}
@@ -126,7 +126,7 @@ export default function FileRow({ item, onNavigate, isLast }: FileRowProps) {
       </div>
 
       {/* Size */}
-      <span className="text-sm text-[#666666]">
+      <span className="text-sm text-muted-foreground">
         {isDir ? (
           item.count != null && item.count > 0 ? (
             `${item.count} item${item.count === 1 ? "" : "s"}`
@@ -139,14 +139,14 @@ export default function FileRow({ item, onNavigate, isLast }: FileRowProps) {
       </span>
 
       {/* Modified */}
-      <span className="text-sm text-[#666666]">
+      <span className="text-sm text-muted-foreground">
         {formatDate(item.modified)}
       </span>
 
       {/* Dots menu */}
       <DropdownMenu>
         <DropdownMenuTrigger
-          className="shrink-0 rounded-md p-0 size-7 flex items-center justify-center cursor-pointer bg-transparent text-[#666666] hover:text-[#171717] outline-none focus-visible:ring-2 focus-visible:ring-[#0070f3]"
+          className="shrink-0 rounded-md p-0 size-7 flex items-center justify-center cursor-pointer bg-transparent text-muted-foreground hover:text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
           onClick={(e) => e.stopPropagation()}
           aria-label="File actions"
         >

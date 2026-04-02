@@ -75,6 +75,11 @@
   --sidebar-accent-foreground: oklch(0.85 0 0);
   --sidebar-border:       oklch(0.25 0.005 260);
   --sidebar-ring:         oklch(0.52 0.22 255);
+
+  /* Shadow-as-border — dark mode (lighter shadow on dark surface) */
+  --shadow-border: rgba(255, 255, 255, 0.08) 0px 0px 0px 1px;
+  --shadow-border-light: rgb(55, 55, 55) 0px 0px 0px 1px;
+  --shadow-card: rgba(255, 255, 255, 0.06) 0px 0px 0px 1px, rgba(0, 0, 0, 0.3) 0px 2px 2px;
 }
 
 body {
@@ -90,7 +95,16 @@ body {
 }
 
 ::selection {
-  background-color: hsla(0, 0%, 95%, 1);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* Directory tree folder icon — blue in light, lighter-blue in dark */
+.dir-folder-icon {
+  color: var(--develop-blue);
+}
+.dark .dir-folder-icon {
+  color: #60a5fa;
 }
 
 /* Scrollbar styling */

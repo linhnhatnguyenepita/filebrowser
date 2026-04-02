@@ -96,16 +96,12 @@ export default function FileCard({ item, onNavigate }: FileCardProps) {
       role="button"
       aria-label={`${item.name}${isDir ? " (folder)" : ""}`}
       className={cn(
-        "group relative flex flex-col rounded-lg bg-white p-4 cursor-pointer text-left transition-all",
-        "hover:bg-[#fafafa]",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0070f3]",
-        isSelected && "ring-2 ring-[#0070f3]"
+        "group relative flex flex-col rounded-lg bg-card p-4 cursor-pointer text-left transition-all dark:shadow-border",
+        "hover:bg-accent",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        isSelected && "ring-2 ring-ring"
       )}
-      style={{
-        boxShadow: isSelected
-          ? "none"
-          : "rgba(0, 0, 0, 0.08) 0px 0px 0px 1px",
-      }}
+      style={isSelected ? { boxShadow: "none" } : undefined}
     >
       {/* Icon + dots menu row */}
       <div className="mb-3 flex items-start justify-between">
@@ -113,7 +109,7 @@ export default function FileCard({ item, onNavigate }: FileCardProps) {
 
         <DropdownMenu>
           <DropdownMenuTrigger
-            className="opacity-0 transition-opacity group-hover:opacity-100 shrink-0 rounded-md p-0 size-7 flex items-center justify-center cursor-pointer bg-transparent text-[#666666] hover:text-[#171717] outline-none focus-visible:opacity-100"
+            className="opacity-0 transition-opacity group-hover:opacity-100 shrink-0 rounded-md p-0 size-7 flex items-center justify-center cursor-pointer bg-transparent text-muted-foreground hover:text-foreground outline-none focus-visible:opacity-100"
             onClick={(e) => e.stopPropagation()}
             aria-label="File actions"
           >
@@ -155,7 +151,7 @@ export default function FileCard({ item, onNavigate }: FileCardProps) {
 
       {/* Name */}
       <h3
-        className="mb-1 truncate text-sm font-medium text-[#171717]"
+        className="mb-1 truncate text-sm font-medium text-foreground"
         style={{ letterSpacing: "-0.01em" }}
         title={item.name}
       >
@@ -163,7 +159,7 @@ export default function FileCard({ item, onNavigate }: FileCardProps) {
       </h3>
 
       {/* Meta */}
-      <div className="flex items-center gap-1.5 text-xs text-[#666666]">
+      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
         {isDir ? (
           item.count != null && item.count > 0 ? (
             <span>{item.count} item{item.count === 1 ? "" : "s"}</span>

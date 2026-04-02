@@ -29,7 +29,7 @@ export default function FileList({ items, onNavigate }: FileListProps) {
 
   if (items.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full text-sm text-[#666666]">
+      <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
         This folder is empty
       </div>
     );
@@ -37,29 +37,28 @@ export default function FileList({ items, onNavigate }: FileListProps) {
 
   return (
     <div
-      className="rounded-lg bg-white overflow-hidden"
-      style={{ boxShadow: "rgba(0, 0, 0, 0.08) 0px 0px 0px 1px" }}
+      className="rounded-lg bg-card overflow-hidden shadow-border"
     >
       {/* Header row */}
       <div
-        className="grid grid-cols-[1fr_100px_140px_40px] gap-4 px-4 py-2.5 text-xs font-medium text-[#666666] uppercase tracking-wide"
-        style={{ borderBottom: "1px solid #ebebeb" }}
+        className="grid grid-cols-[1fr_100px_140px_40px] gap-4 px-4 py-2.5 text-xs font-medium text-muted-foreground uppercase tracking-wide"
+        style={{ borderBottom: "1px solid var(--border)" }}
       >
         <button
           onClick={() => handleSort("name")}
-          className="flex items-center gap-1 text-left hover:text-[#171717] transition-colors"
+          className="flex items-center gap-1 text-left hover:text-foreground transition-colors"
         >
           Name <SortIndicator field="name" />
         </button>
         <button
           onClick={() => handleSort("size")}
-          className="flex items-center gap-1 hover:text-[#171717] transition-colors"
+          className="flex items-center gap-1 hover:text-foreground transition-colors"
         >
           Size <SortIndicator field="size" />
         </button>
         <button
           onClick={() => handleSort("modified")}
-          className="flex items-center gap-1 hover:text-[#171717] transition-colors"
+          className="flex items-center gap-1 hover:text-foreground transition-colors"
         >
           Modified <SortIndicator field="modified" />
         </button>

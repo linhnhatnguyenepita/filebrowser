@@ -47,14 +47,13 @@ function TreeNodeItem({
   return (
     <div>
       <div
-        className="flex items-center gap-1 rounded-md cursor-pointer select-none transition-colors py-2 pr-3"
+        className="flex items-center gap-1 rounded-md cursor-pointer select-none transition-colors py-2 pr-3 text-foreground"
         style={{
           paddingLeft: `${depth * 12 + 10}px`,
-          backgroundColor: isActive ? "#ffffff" : undefined,
-          color: isActive ? "#171717" : "#666666",
-          boxShadow: isActive ? "rgba(0, 0, 0, 0.08) 0px 0px 0px 1px" : undefined,
+          backgroundColor: isActive ? "var(--sidebar-accent)" : undefined,
+          boxShadow: isActive ? "var(--shadow-border)" : undefined,
         }}
-        onMouseEnter={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.backgroundColor = "#ffffff"; }}
+        onMouseEnter={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.backgroundColor = "var(--sidebar-accent)"; }}
         onMouseLeave={(e) => { if (!isActive) (e.currentTarget as HTMLElement).style.backgroundColor = ""; }}
         onClick={() => {
           onNavigate(node.path);
@@ -86,13 +85,12 @@ function TreeNodeItem({
 
         {/* Folder icon */}
         <span
-          className="shrink-0"
+          className="shrink-0 dir-folder-icon"
           style={{
             width: "20px",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: "#0a72ef",
           }}
         >
           {node.isExpanded ? <FolderOpen size={16} /> : <Folder size={16} />}

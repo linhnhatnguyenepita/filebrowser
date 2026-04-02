@@ -17,8 +17,8 @@ export default function Breadcrumbs({ path, onNavigate }: BreadcrumbsProps) {
     <nav aria-label="File path" className="flex items-center gap-1 text-sm min-w-0 overflow-hidden">
       <button
         onClick={() => onNavigate("/")}
-        className={`px-2 py-1 rounded-md transition-colors hover:text-[#171717] shrink-0 ${
-          segments.length === 0 ? "font-medium text-[#171717]" : "text-[#666666] hover:bg-[#fafafa]"
+        className={`px-2 py-1 rounded-md transition-colors hover:text-foreground shrink-0 ${
+          segments.length === 0 ? "font-medium text-foreground" : "text-muted-foreground hover:bg-accent"
         }`}
         aria-label="Home"
       >
@@ -29,11 +29,11 @@ export default function Breadcrumbs({ path, onNavigate }: BreadcrumbsProps) {
         const isLast = idx === crumbs.length - 1;
         return (
           <span key={crumb.path} className="flex items-center gap-1 min-w-0">
-            <ChevronRight size={14} className="shrink-0 text-[#666666]" />
+            <ChevronRight size={14} className="shrink-0 text-muted-foreground" />
             <button
               onClick={() => onNavigate(crumb.path)}
-              className={`px-2 py-1 rounded-md transition-colors truncate max-w-[180px] hover:bg-[#fafafa] ${
-                isLast ? "font-medium text-[#171717]" : "text-[#666666] hover:text-[#171717]"
+              className={`px-2 py-1 rounded-md transition-colors truncate max-w-[180px] hover:bg-accent ${
+                isLast ? "font-medium text-foreground" : "text-muted-foreground hover:text-foreground"
               }`}
               title={crumb.label}
             >
