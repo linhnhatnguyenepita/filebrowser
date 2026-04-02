@@ -12,11 +12,11 @@ import (
 
 // settingsGetHandler retrieves the current system settings.
 // @Summary Get system settings
-// @Description Returns the current configuration settings for signup, user directories, rules, frontend.
+// @Description Returns the current configuration settings for signup, user directories, rules, and server.
 // @Tags Settings
 // @Accept json
 // @Produce json
-// @Param property query string false "Property to retrieve: `userDefaults`, `frontend`, `auth`, `server`, `sources`"
+// @Param property query string false "Property to retrieve: `userDefaults`, `auth`, `server`, `sources`"
 // @Success 200 {object} settings.Settings "System settings data"
 // @Router /api/settings [get]
 func settingsGetHandler(w http.ResponseWriter, r *http.Request, d *requestContext) (int, error) {
@@ -26,8 +26,6 @@ func settingsGetHandler(w http.ResponseWriter, r *http.Request, d *requestContex
 		switch property {
 		case "userDefaults":
 			return renderJSON(w, r, config.UserDefaults)
-		case "frontend":
-			return renderJSON(w, r, config.Frontend)
 		case "auth":
 			return renderJSON(w, r, config.Auth)
 		case "server":
@@ -63,20 +61,13 @@ func settingsConfigHandler(w http.ResponseWriter, r *http.Request, d *requestCon
 	var yamlConfig string
 
 	// Try to read the generated YAML file for comments (should always exist)
-	var embeddedYaml []byte
-	var readErr error
-
-	if settings.Env.EmbeddedFs {
-		embeddedYaml, readErr = assets.ReadFile("embed/config.generated.yaml")
-	} else {
-		embeddedYaml, readErr = os.ReadFile("http/dist/config.generated.yaml")
-		if readErr != nil {
-			return http.StatusInternalServerError, fmt.Errorf("error reading generated YAML: %v", readErr)
-		}
+	embeddedYaml, readErr := os.ReadFile("http/dist/config.generated.yaml")
+	if readErr != nil {
+		return http.StatusInternalServerError, fmt.Errorf("error reading generated YAML: %v", readErr)
 	}
 
 	// If we successfully read the generated YAML, use it as the comment source
-	if readErr == nil && len(embeddedYaml) > 0 {
+	if len(embeddedYaml) > 0 {
 		yamlConfig, err = settings.GenerateConfigYamlWithEmbedded(config, showComments, showFull, false, string(embeddedYaml))
 		if err != nil {
 			return http.StatusInternalServerError, fmt.Errorf("error generating YAML: %v", err)

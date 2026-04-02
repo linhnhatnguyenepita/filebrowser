@@ -9,8 +9,8 @@ services:
   local-playwright-screenshots:
     container_name: local-playwright-screenshots
     volumes:
-      - ../frontend-next/generated:/app/frontend/generated
-    entrypoint: ["/bin/sh", "-c", "./filebrowser & sleep 2 && cd ../frontend-next && npx playwright test --project dark-screenshots && npx playwright test --project light-screenshots"]
+      - ../frontend/generated:/app/frontend/generated
+    entrypoint: ["/bin/sh", "-c", "./filebrowser & sleep 2 && cd /app/frontend && npx playwright test --project dark-screenshots && npx playwright test --project light-screenshots"]
     build:
       dockerfile: ./_docker/Dockerfile.playwright-local
       context: ../

@@ -17,7 +17,6 @@ const (
 type Settings struct {
 	Server       Server       `json:"server"`
 	Auth         Auth         `json:"auth"`
-	Frontend     Frontend     `json:"frontend"`
 	UserDefaults UserDefaults `json:"userDefaults"`
 	Integrations Integrations `json:"integrations"`
 }
@@ -30,16 +29,6 @@ type Environment struct {
 	EmbeddedFs            bool   `json:"-"` // used internally if compiled with embedded fs support
 	FFmpegPath            string `json:"-"`
 	FFprobePath           string `json:"-"`
-	LoginIconPath         string `json:"-"` // resolved login icon path (filesystem or embedded)
-	LoginIconIsCustom     bool   `json:"-"` // true if login icon is from custom filesystem path
-	LoginIconEmbeddedPath string `json:"-"` // embedded asset path for default icon
-	FaviconPath           string `json:"-"` // resolved favicon path (filesystem or embedded)
-	FaviconIsCustom       bool   `json:"-"` // true if favicon is from custom filesystem path
-	FaviconEmbeddedPath   string `json:"-"` // embedded asset path for default favicon
-	PWAIconsDir           string `json:"-"` // directory where generated PWA icons are stored
-	PWAIcon192            string `json:"-"` // path to 192x192 PWA icon
-	PWAIcon256            string `json:"-"` // path to 256x256 PWA icon
-	PWAIcon512            string `json:"-"` // path to 512x512 PWA icon
 }
 
 type Server struct {
@@ -65,7 +54,7 @@ type Server struct {
 	MaxArchiveSizeGB             int64          `json:"maxArchiveSize"`  // maximum archive/unarchive size in GB. 0 means no limit. (default: 20)
 	Filesystem                   Filesystem     `json:"filesystem"`      // filesystem settings
 	IndexSqlConfig               IndexSqlConfig `json:"indexSqlConfig"`  // Index database SQL configuration
-	DisableWebDAV                bool           `json:"disableWebDAV"`   // disable webdav support (default: false)
+	DisableWebDAV                bool           `json:"disableWebDAV"` // disable webdav support (default: false)
 	// not exposed to config
 	SourceMap    map[string]*Source `json:"-" validate:"omitempty"` // uses realpath as key
 	NameToSource map[string]*Source `json:"-" validate:"omitempty"` // uses name as key
@@ -262,43 +251,6 @@ type ResolvedRulesConfig struct {
 	IgnoreAllSymlinks        bool // Excludes all symbolic links
 	IndexingDisabled         bool // Excludes all files and folders from indexing
 	NoRules                  bool // No rules are configured
-}
-
-type Frontend struct {
-	Name                  string         `json:"name"`                  // display name
-	DisableDefaultLinks   bool           `json:"disableDefaultLinks"`   // disable default links in the sidebar
-	DisableUsedPercentage bool           `json:"disableUsedPercentage"` // disable used percentage for the sources in the sidebar
-	ExternalLinks         []ExternalLink `json:"externalLinks"`
-	DisableNavButtons     bool           `json:"disableNavButtons"` // disable the nav buttons in the sidebar
-	Styling               StylingConfig  `json:"styling"`
-	Favicon               string         `json:"favicon"`             // path to a favicon to use for the frontend
-	Description           string         `json:"description"`         // description that shows up in html head meta description
-	LoginIcon             string         `json:"loginIcon"`           // path to an image file for the login page icon
-	LoginButtonText       string         `json:"loginButtonText"`     // text to display on the login button
-	OIDCLoginButtonText   string         `json:"oidcLoginButtonText"` // text to display on the OIDC login button
-}
-
-type StylingConfig struct {
-	DisableEventBasedThemes bool                   `json:"disableEventThemes"` // disable the event based themes,
-	CustomCSS               string                 `json:"customCSS"`          // if a valid path to a css file is provided, it will be applied for all users. (eg. "reduce-rounded-corners.css")
-	CustomCSSRaw            string                 `json:"-"`                  // The css raw content to use for the custom css.
-	LightBackground         string                 `json:"lightBackground"`    // specify a valid CSS color property value to use as the background color in light mode
-	DarkBackground          string                 `json:"darkBackground"`     // Specify a valid CSS color property value to use as the background color in dark mode
-	CustomThemes            map[string]CustomTheme `json:"customThemes"`       // A list of custom css files that each user can select to override the default styling. if "default" is key name then it will be the default option.
-	// In-memory (not exposed to config)
-	CustomThemeOptions map[string]CustomTheme `json:"-"` // not exposed
-}
-
-type CustomTheme struct {
-	Description string `json:"description"`   // The description of the theme to display in the UI.
-	CSS         string `json:"css,omitempty"` // The css file path and filename to use for the theme.
-	CssRaw      string `json:"-"`             // The css raw content to use for the theme.
-}
-
-type ExternalLink struct {
-	Text  string `json:"text" validate:"required"` // the text to display on the link
-	Title string `json:"title"`                    // the title to display on hover
-	Url   string `json:"url" validate:"required"`  // the url to link to
 }
 
 // UserDefaultsPreview holds preview settings with pointer types for defaults

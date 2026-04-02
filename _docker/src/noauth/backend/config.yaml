@@ -4,7 +4,7 @@ server:
   logging:
     - levels: "info|error|debug"
   sources:
-    - path: "../frontend-next/tests/playwright-files"
+    - path: "../frontend/tests/playwright-files"
       name: "exclude"
       config:
         defaultEnabled: true
@@ -14,7 +14,7 @@ server:
             viewable: true
           - fileStartsWith: "startsWith"
           - fileName: "dontshow.txt"
-    - path: "../frontend-next/tests/playwright-files2"
+    - path: "../frontend/tests/playwright-files"
       name: "include"
       config:
         defaultEnabled: true

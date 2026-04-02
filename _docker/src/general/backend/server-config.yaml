@@ -4,7 +4,7 @@ server-main: &server-main
   logging:
     - levels: "info|error|debug"
   sources:
-    - path: "../frontend-next/tests/playwright-files"
+    - path: "../frontend/tests/playwright-files"
       name: "playwright + files"
       config:
         defaultEnabled: true

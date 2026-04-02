@@ -4,7 +4,7 @@ server:
   logging:
     - levels: "info|error|debug"
   sources:
-    - path: "../frontend-next/tests/playwright-files"
+    - path: "../frontend/tests/playwright-files"
 
 auth:
   methods:

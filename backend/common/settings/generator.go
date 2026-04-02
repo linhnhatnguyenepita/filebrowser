@@ -880,7 +880,6 @@ func GenerateYaml() {
 	setupSources(true)
 	setupUrls()
 	setupMedia(true)
-	setupFrontend(true)
 
 	output := "../frontend-next/public/config.generated.yaml" // "output YAML file"
 

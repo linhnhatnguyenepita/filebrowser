@@ -1615,9 +1615,6 @@ type DiskUsage struct {
 }
 
 func (idx *Index) SetUsage(totalBytes uint64) {
-	if settings.Config.Frontend.DisableUsedPercentage {
-		return
-	}
 	idx.mu.Lock()
 	defer idx.mu.Unlock()
 	idx.DiskTotal = totalBytes

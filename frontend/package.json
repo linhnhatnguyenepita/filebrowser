@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "rm -rf ../backend/http/dist/* && rm -rf ../backend/http/embed/* && vite build && cp -r ../backend/http/dist/* ../backend/http/embed",
+    "build": "vite build",
     "typecheck": "tsc -b",
     "lint": "eslint src/",
     "preview": "vite preview"

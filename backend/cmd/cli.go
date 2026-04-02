@@ -416,14 +416,11 @@ func createConfig(configpath string) {
 		}
 		fmt.Printf("Error: '%s' is not a valid path. Please enter a path to a file ending in .db", config.Server.Database)
 	}
-	// 4. Ask for the application brand name
-	config.Frontend.Name = askQuestion(reader, "What should the application brand name be?", "FileBrowser Quantum")
-
-	// 5. Ask for admin username and password
+	// 4. Ask for admin username and password
 	config.Auth.AdminUsername = askQuestion(reader, "What should the default admin username be?", "admin")
 	config.Auth.AdminPassword = askQuestion(reader, "What should the default admin password be?", "admin")
 
-	// 6. Ask boolean (Yes/No) questions using the helper
+	// 5. Ask boolean (Yes/No) questions using the helper
 	config.UserDefaults.Permissions.Modify = askYesNoQuestion(reader, "Should a new user be able to modify content by default?", "no")
 	config.UserDefaults.Permissions.Share = askYesNoQuestion(reader, "Should a new user be able to create shares by default?", "no")
 
