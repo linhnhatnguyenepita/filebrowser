@@ -7,7 +7,7 @@ services:
       dockerfile: ./_docker/Dockerfile.playwright-local
       context: ../
   local-playwright-screenshots:
-    container_name: local-playwright
+    container_name: local-playwright-screenshots
     volumes:
       - ../frontend-next/generated:/app/frontend/generated
     entrypoint: ["/bin/sh", "-c", "./filebrowser & sleep 2 && cd ../frontend-next && npx playwright test --project dark-screenshots && npx playwright test --project light-screenshots"]
@@ -36,7 +36,6 @@ services:
   filebrowser-jwt:
     hostname: filebrowser
     volumes:
-      - '../frontend-next:/home/frontend'
       - "./src/jwt/backend/config.yaml:/home/filebrowser/data/config.yaml"
     build:
       context: ../
@@ -44,7 +43,6 @@ services:
   filebrowser:
     hostname: filebrowser
     volumes:
-      - '../frontend-next:/home/frontend'
       - "./src/proxy/backend/config.yaml:/home/filebrowser/data/config.yaml"
     build:
       context: ../
