@@ -1,0 +1,7 @@
+server:
+  port: 8080
+  baseURL: "/"
+  logging:
+    - levels: "info|warning|error"
+  sources:
+    - path: "/srv"
