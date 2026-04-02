@@ -45,10 +45,7 @@ export const useFileStore = create<FileState>((set) => ({
   sortBy: "name",
   sortAsc: true,
   fetchDirectory: async (path, source) => {
-    // #region agent log
-    fetch('http://127.0.0.1:7419/ingest/15698139-aa77-4be0-8181-aa4c755deb9e',{method:'POST',headers:{'Content-Type':'application/json','X-Debug-Session-Id':'6731df'},body:JSON.stringify({sessionId:'6731df',location:'file-store.ts:fetchDirectory:entry',message:'fetchDirectory called',data:{path,source,initialSource:'/',modulePhase:'fetchDirectory'},timestamp:Date.now(),runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-    // #endregion
-    set({ loading: true, path, source, selected: new Set() });
+set({ loading: true, path, source, selected: new Set() });
     try {
       const data = await resourcesApi.fetchDirectory(source, path);
       set({ listing: data, items: buildItems(data), loading: false });
