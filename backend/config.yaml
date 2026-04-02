@@ -1,5 +1,5 @@
 server:
-  port: 2818
+  port: 80
   baseURL:  "/"
   logging:
     - levels: "info|warning|error"
