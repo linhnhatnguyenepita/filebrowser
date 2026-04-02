@@ -13,7 +13,7 @@ endif
 
 .SILENT:
 
-.PHONY: setup update build build-docker build-backend build-frontend dev run generate-docs
+.PHONY: setup update build build-docker build-backend build-frontend dev dev-frontend dev-all run generate-docs
 .PHONY: lint-frontend lint-backend lint test test-backend test-frontend check-all
 .PHONY: check-translations sync-translations test-playwright run-proxy screenshots
 
@@ -45,15 +45,24 @@ build-backend:
 	cd backend && go build -o filebrowser --ldflags="-w -s -X 'github.com/gtsteffaniak/filebrowser/backend/common/version.CommitSHA=testingCommit' -X 'github.com/gtsteffaniak/filebrowser/backend/common/version.Version=testing'"
 	@echo "✓ Backend built successfully"
 
-# New dev target with hot-reloading for frontend and backend
+# Start Vite dev server (frontend) and Go backend together.
+# Terminal 1 (optional shortcut): make dev-frontend  ->  cd frontend && npm run dev
+# Terminal 2:                 make dev-backend   ->  cd backend && go run . -c test_config.yaml
 dev: generate-docs
-	@echo "Starting dev servers... Press Ctrl+C to stop."
-	@cd frontend && DEV_BUILD=true npm run watch & \
-	FRONTEND_PID=$$!; \
-	cd backend && export FILEBROWSER_DEVMODE=true && go tool air $$([ "$(OS)" = "Windows_NT" ] && echo "-c .air.windows.toml" || echo "") & \
-	BACKEND_PID=$$!; \
-	trap 'echo "Stopping..."; kill $$FRONTEND_PID $$BACKEND_PID 2>/dev/null; sleep 1; kill -9 $$FRONTEND_PID $$BACKEND_PID 2>/dev/null; exit 0' INT TERM; \
-	wait $$FRONTEND_PID $$BACKEND_PID 2>/dev/null || true
+	@echo "NOTE: For frontend dev, open a second terminal and run: cd frontend && npm run dev"
+	@echo "Starting backend... Press Ctrl+C to stop."
+	@cd backend && FILEBROWSER_DEVMODE=true go tool air $$([ "$(OS)" = "Windows_NT" ] && echo "-c .air.windows.toml" || echo "-c .air.toml")
+
+# Vite dev server with HMR. Proxies /api/* to localhost:2818.
+# Run the backend separately: cd backend && go run . -c test_config.yaml
+dev-frontend:
+	@cd frontend && npm run dev
+
+# Run both backend and frontend dev server in background.
+dev-all: generate-docs
+	@echo "Starting frontend dev server (port 5173) and backend (port 2818)... Press Ctrl+C to stop."
+	@(cd frontend && npm run dev &)
+	@cd backend && FILEBROWSER_DEVMODE=true go tool air $$([ "$(OS)" = "Windows_NT" ] && echo "-c .air.windows.toml" || echo "-c .air.toml")
 
 run: build-frontend generate-docs
 	cd backend && go tool swag init --output swagger/docs

@@ -4,9 +4,6 @@ backend/**.db
 backend/tmp
 backend/dist
 backend/backend*
-backend/http/dist/**
 backend/vendor/**
 
-frontend/dist/**
-frontend/node_modules/**
-frontend/pkg/**
+frontend-next/pkg/**

@@ -14,7 +14,7 @@ server:
             viewable: true
           - fileStartsWith: "startsWith"
           - fileName: "dontshow.txt"
-    - path: "../frontend/tests/playwright-files2"
+    - path: "../frontend/tests/playwright-files"
       name: "include"
       config:
         defaultEnabled: true

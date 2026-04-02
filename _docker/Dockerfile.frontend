@@ -1,0 +1,43 @@
+# Stage 1: Build React frontend
+FROM node:22-alpine AS frontend-build
+WORKDIR /app
+COPY ./frontend/package*.json ./
+RUN npm ci
+COPY ./frontend/ ./
+RUN npm run build
+
+# Stage 2: Final Alpine image with nginx serving static SPA
+FROM alpine:3.20
+
+# Create nginx runtime directories as root
+RUN apk --no-cache add nginx ca-certificates curl bash \
+    && mkdir -p /var/lib/nginx/tmp/client_body \
+               /var/lib/nginx/proxy \
+               /var/lib/nginx/fastcgi \
+               /var/lib/nginx/uwsgi \
+               /var/lib/nginx/scgi \
+               /var/log/nginx \
+               /usr/share/nginx/html/dist \
+    && chown -R root:root /var/lib/nginx \
+    && chown -R root:root /var/log/nginx \
+    && chown -R root:root /usr/share/nginx/html \
+    && rm -rf /var/cache/apk/*
+
+# Copy built SPA dist files
+COPY --from=frontend-build --chown=root:root [ "/app/dist/", "/usr/share/nginx/html/dist/" ]
+
+# Copy nginx config for SPA
+COPY --chown=root:root _docker/nginx.frontend.conf /etc/nginx/nginx.conf
+
+# Create non-root user
+RUN adduser -D -s /bin/sh -u 1000 frontend
+USER frontend
+
+WORKDIR /home/frontend
+
+EXPOSE 80
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost/ || exit 1
+
+CMD ["nginx", "-c", "/etc/nginx/nginx.conf"]

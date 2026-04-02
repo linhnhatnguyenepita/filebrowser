@@ -167,8 +167,9 @@ func checkPermissionsImpl(opts utils.FileOptions, access *access.Storage, user *
 }
 
 type Items struct {
-	Files   []string `json:"files,omitempty"`
-	Folders []string `json:"folders,omitempty"`
+	Files        []string          `json:"files,omitempty"`
+	Folders      []string          `json:"folders,omitempty"`
+	FolderCounts map[string]int64  `json:"folderCounts,omitempty"` // count per folder name; -1 if unreadable
 }
 
 func GetDirItems(opts utils.FileOptions, access *access.Storage, user *users.User) (Items, error) {
@@ -205,8 +206,10 @@ func GetDirItems(opts utils.FileOptions, access *access.Storage, user *users.Use
 		}
 	}
 	if opts.Only == "folders" || opts.Only == "" {
+		items.FolderCounts = make(map[string]int64)
 		for _, folder := range info.Folders {
 			items.Folders = append(items.Folders, folder.Name)
+			items.FolderCounts[folder.Name] = folder.Count
 		}
 	}
 	return items, nil

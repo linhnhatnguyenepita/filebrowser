@@ -18,7 +18,6 @@ import (
 	"github.com/goccy/go-yaml"
 	"github.com/gtsteffaniak/filebrowser/backend/adapters/fs/fileutils"
 	"github.com/gtsteffaniak/filebrowser/backend/common/utils"
-	"github.com/gtsteffaniak/filebrowser/backend/common/version"
 	"github.com/gtsteffaniak/filebrowser/backend/database/users"
 	"github.com/gtsteffaniak/go-logger/logger"
 )
@@ -55,7 +54,6 @@ func Initialize(configFile string) {
 	setupSources(false)
 	InitializeUserResolvers() // Initialize user package resolvers after sources are set up
 	setupUrls()
-	setupFrontend(false)
 	setupMedia(false)
 }
 
@@ -223,64 +221,7 @@ func testCacheDirSpeed() {
 	}
 }
 
-func setupFrontend(generate bool) {
-	// Load login icon configuration at startup
-	loadLoginIcon()
-	if Config.Server.MinSearchLength == 0 {
-		Config.Server.MinSearchLength = 3
-	}
-	if !Config.Frontend.DisableDefaultLinks {
-		Config.Frontend.ExternalLinks = append(Config.Frontend.ExternalLinks, ExternalLink{
-			Text:  fmt.Sprintf("(%v)", version.Version),
-			Title: version.CommitSHA,
-			Url:   "https://github.com/gtsteffaniak/filebrowser/releases/",
-		})
-		Config.Frontend.ExternalLinks = append(Config.Frontend.ExternalLinks, ExternalLink{
-			Text: "Help",
-			Url:  "help prompt",
-		})
-	}
-	if Config.Frontend.Description == "" {
-		Config.Frontend.Description = "FileBrowser Quantum is a file manager for the web which can be used to manage files on your server"
-	}
-	Config.Frontend.Styling.LightBackground = FallbackColor(Config.Frontend.Styling.LightBackground, "#f5f5f5")
-	Config.Frontend.Styling.DarkBackground = FallbackColor(Config.Frontend.Styling.DarkBackground, "#141D24")
-	var err error
-	if Config.Frontend.Styling.CustomCSS != "" {
-		Config.Frontend.Styling.CustomCSSRaw, err = readCustomCSS(Config.Frontend.Styling.CustomCSS)
-		if err != nil {
-			logger.Warning(err.Error())
-		}
-	}
-	Config.Frontend.Styling.CustomThemeOptions = map[string]CustomTheme{}
-	if Config.Frontend.Styling.CustomThemes == nil {
-		Config.Frontend.Styling.CustomThemes = map[string]CustomTheme{}
-	}
-	for name, theme := range Config.Frontend.Styling.CustomThemes {
-		addCustomTheme(name, theme.Description, theme.CSS)
-	}
-	noThemes := len(Config.Frontend.Styling.CustomThemes) == 0
-	if noThemes {
-		addCustomTheme("default", "The default theme", "")
-		// check if file exists
-		if _, err := os.Stat("reduce-rounded-corners.css"); err == nil {
-			addCustomTheme("alternative", "Reduce rounded corners", "reduce-rounded-corners.css")
-			if generate {
-				Config.Frontend.Styling.CustomThemes["alternative"] = CustomTheme{
-					Description: "Reduce rounded corners",
-					CSS:         "reduce-rounded-corners.css",
-				}
-			}
-		}
-	}
-	_, ok := Config.Frontend.Styling.CustomThemes["default"]
-	if !ok {
-		addCustomTheme("default", "The default theme", "")
-	}
-	// Load custom favicon if configured
-	loadCustomFavicon()
-}
-
+// setupMedia
 func setupMedia(generate bool) {
 	// Save user's explicit config before applying defaults
 	userImageConfig := make(map[ImagePreviewType]*bool)
@@ -703,10 +644,7 @@ func setDefaults(generate bool) Settings {
 				},
 			},
 		},
-		Frontend: Frontend{
-			Name: "FileBrowser Quantum",
-		},
-		UserDefaults: UserDefaults{
+	UserDefaults: UserDefaults{
 			DeleteAfterArchive:   true,
 			DisableOnlyOfficeExt: ".md .txt .pdf .html .xml",
 			StickySidebar:        true,
@@ -755,96 +693,6 @@ func setDefaults(generate bool) Settings {
 		s.Integrations.Media.Convert.VideoPreview[t] = boolPtr(true)
 	}
 	return s
-}
-
-// validateCustomImage validates a custom image file path and returns the absolute path or error
-func validateCustomImage(configPath, imageName string, allowedFormats []string) (absolutePath string, err error) {
-	// Get absolute path
-	absolutePath, err = filepath.Abs(configPath)
-	if err != nil {
-		return "", fmt.Errorf("could not resolve path: %w", err)
-	}
-
-	// Check if file exists
-	_, err = os.Stat(absolutePath)
-	if err != nil {
-		return "", fmt.Errorf("could not access file: %w", err)
-	}
-
-	// Validate file format
-	ext := strings.ToLower(filepath.Ext(absolutePath))
-	validFormat := false
-	for _, format := range allowedFormats {
-		if ext == format {
-			validFormat = true
-			break
-		}
-	}
-	if !validFormat {
-		return "", fmt.Errorf("unsupported format '%s', supported formats: %v", ext, allowedFormats)
-	}
-
-	return absolutePath, nil
-}
-
-func loadCustomFavicon() {
-	const imageName = "favicon"
-	allowedFormats := []string{".ico", ".png", ".svg", ".jpg", ".jpeg", ".gif", ".webp"}
-
-	// Set default embedded favicon path
-	Env.FaviconEmbeddedPath = "img/icons/favicon.svg"
-
-	// Check if a custom favicon path is configured
-	if Config.Frontend.Favicon == "" {
-		Env.FaviconPath = Env.FaviconEmbeddedPath
-		Env.FaviconIsCustom = false
-		return
-	}
-
-	// Validate custom favicon
-	validatedPath, err := validateCustomImage(Config.Frontend.Favicon, imageName, allowedFormats)
-	if err != nil {
-		logger.Warningf("Custom favicon validation failed: %v, using default", err)
-		Config.Frontend.Favicon = ""
-		Env.FaviconPath = Env.FaviconEmbeddedPath
-		Env.FaviconIsCustom = false
-		return
-	}
-
-	// Update to validated path and mark as custom
-	Config.Frontend.Favicon = validatedPath
-	Env.FaviconPath = validatedPath
-	Env.FaviconIsCustom = true
-	logger.Infof("Using custom favicon: %s", Env.FaviconPath)
-}
-
-func loadLoginIcon() {
-	const imageName = "login icon"
-	allowedFormats := []string{".svg", ".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico"}
-
-	// Set default embedded icon path - just use favicon.svg (light/dark handled by CSS)
-	Env.LoginIconEmbeddedPath = "img/icons/favicon.svg"
-
-	// Check if a custom login icon path is configured
-	if Config.Frontend.LoginIcon == "" {
-		Env.LoginIconPath = Env.LoginIconEmbeddedPath
-		Env.LoginIconIsCustom = false
-		return
-	}
-
-	// Validate custom login icon
-	validatedPath, err := validateCustomImage(Config.Frontend.LoginIcon, imageName, allowedFormats)
-	if err != nil {
-		logger.Warningf("Custom login icon validation failed: %v, using default", err)
-		Env.LoginIconPath = Env.LoginIconEmbeddedPath
-		Env.LoginIconIsCustom = false
-		return
-	}
-
-	// Update to validated path and mark as custom
-	Env.LoginIconPath = validatedPath
-	Env.LoginIconIsCustom = true
-	logger.Infof("Using custom login icon: %s", Env.LoginIconPath)
 }
 
 // setConditionalsMap builds optimized map structures from conditional rules for O(1) lookups

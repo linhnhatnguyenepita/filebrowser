@@ -1,0 +1,13 @@
+FROM node:22-alpine
+WORKDIR /app
+
+# Install deps at build time (cached layer — only re-runs when package*.json changes)
+COPY package*.json ./
+RUN npm ci
+
+# Copy remaining config files (index.html, tsconfig, vite.config.ts, etc.)
+# src/ and public/ will be overridden by bind-mounts at runtime
+COPY . .
+
+EXPOSE 5173
+CMD ["npm", "run", "dev", "--", "--host"]

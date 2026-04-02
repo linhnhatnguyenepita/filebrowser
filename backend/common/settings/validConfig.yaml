@@ -18,9 +18,6 @@ auth:
   methods:
     password:
       enabled: true
-frontend:
-  name: ""
-  disableUsedPercentage: true
 userDefaults:
   locale: ""
   viewMode: ""

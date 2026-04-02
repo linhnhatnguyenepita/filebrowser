@@ -1,0 +1,21 @@
+# Stage 1: Build Go binary
+FROM golang:alpine AS go-build
+WORKDIR /app
+COPY ./backend/ ./
+RUN apk update && apk add --no-cache gcc musl-dev
+RUN CGO_ENABLED=1 go build \
+  -tags mupdf,musl \
+  -o filebrowser .
+
+# Stage 2: Runtime image
+FROM alpine:3.20
+RUN apk --no-cache add ca-certificates ffmpeg
+
+RUN adduser -D -s /bin/sh -u 1000 filebrowser
+USER filebrowser
+WORKDIR /home/filebrowser
+
+COPY --from=go-build --chown=filebrowser:filebrowser /app/filebrowser ./
+
+EXPOSE 8080
+CMD ["./filebrowser"]

@@ -48,9 +48,6 @@ auth:
   tokenExpirationHours: 3
   <<: *simple_auth
 
-frontend:
-  name: "Test FileBrowser"
-
 userDefaults:
   darkMode: true
   viewMode: "grid"
@@ -97,10 +94,6 @@ userDefaults:
 		t.Errorf("Expected 2 sources, got %d", len(Config.Server.Sources))
 	}
 
-	if Config.Frontend.Name != "Test FileBrowser" {
-		t.Errorf("Expected frontend name 'Test FileBrowser', got '%s'", Config.Frontend.Name)
-	}
-
 	if Config.UserDefaults.ViewMode != "grid" {
 		t.Errorf("Expected view mode 'grid', got '%s'", Config.UserDefaults.ViewMode)
 	}
@@ -121,8 +114,7 @@ server:
 auth:
   tokenExpirationHours: 2
 
-frontend:
-  name: "Simple FileBrowser"
+userDefaults:
 `
 	configPath := filepath.Join(testDir, "simple-config.yaml")
 	if err := os.WriteFile(configPath, []byte(simpleConfig), 0644); err != nil {
@@ -140,10 +132,6 @@ frontend:
 	if Config.Server.Port != 8080 {
 		t.Errorf("Expected server port 8080, got %d", Config.Server.Port)
 	}
-
-	if Config.Frontend.Name != "Simple FileBrowser" {
-		t.Errorf("Expected frontend name 'Simple FileBrowser', got '%s'", Config.Frontend.Name)
-	}
 }
 
 func TestMultiConfigWithNestedReferences(t *testing.T) {
@@ -159,7 +147,7 @@ base_logging: &base_logging
   - levels: "info|warning|error"
     output: "stdout"
 
-# Base permissions  
+# Base permissions
 base_permissions: &base_permissions
   modify: false
   share: false
@@ -188,9 +176,6 @@ userDefaults:
   locale: "en"
   viewMode: "normal"
   permissions: *base_permissions
-
-frontend:
-  name: "Nested Reference Test"
 `
 	mainPath := filepath.Join(testDir, "config.yaml")
 	if err := os.WriteFile(mainPath, []byte(mainConfig), 0644); err != nil {

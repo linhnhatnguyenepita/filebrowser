@@ -1,0 +1,8 @@
+server:
+  port: 8080
+  baseURL: "/"
+  database: "/home/filebrowser/data/database.db"
+  logging:
+    - levels: "info|warning|error"
+  sources:
+    - path: "/srv"

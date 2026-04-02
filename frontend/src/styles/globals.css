@@ -1,0 +1,177 @@
+@import "@fontsource-variable/geist/index.css";
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Vercel / Geist design system — light mode */
+  --background:           oklch(1 0 0);           /* #ffffff */
+  --foreground:           oklch(0.145 0 0);        /* #171717 */
+  --card:                 oklch(1 0 0);            /* #ffffff */
+  --card-foreground:      oklch(0.145 0 0);
+  --popover:              oklch(1 0 0);
+  --popover-foreground:   oklch(0.145 0 0);
+  --primary:              oklch(0.145 0 0);        /* #171717 */
+  --primary-foreground:   oklch(0.985 0 0);        /* #ffffff */
+  --secondary:            oklch(0.985 0 0);        /* #fafafa */
+  --secondary-foreground: oklch(0.145 0 0);
+  --muted:                oklch(0.985 0 0);        /* #fafafa */
+  --muted-foreground:     oklch(0.452 0 0);        /* #666666 */
+  --accent:               oklch(0.985 0 0);
+  --accent-foreground:    oklch(0.145 0 0);
+  --destructive:          oklch(0.6 0.22 25);      /* #ff5b4f — Vercel Ship Red */
+  --border:               oklch(0.922 0 0);        /* #ebebeb */
+  --input:                oklch(0.985 0 0);
+  --ring:                 oklch(0.52 0.22 255);    /* focus blue hsla(212,100%,48%,1) */
+  --radius:               0.375rem;               /* 6px — Vercel standard */
+  --sidebar:              oklch(0.985 0 0);        /* #fafafa */
+  --sidebar-foreground:   oklch(0.145 0 0);
+  --sidebar-primary:      oklch(0.145 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent:       oklch(1 0 0);
+  --sidebar-accent-foreground: oklch(0.145 0 0);
+  --sidebar-border:       oklch(0.922 0 0);
+  --sidebar-ring:         oklch(0.52 0.22 255);
+
+  /* Vercel workflow accent colors */
+  --develop-blue:  #0a72ef;
+  --preview-pink:  #de1d8d;
+  --ship-red:      #ff5b4f;
+  --console-blue:  #0070f3;
+  --console-purple: #7928ca;
+
+  /* Shadow-as-border (Vercel signature technique) */
+  --shadow-border: rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+  --shadow-border-light: rgb(235, 235, 235) 0px 0px 0px 1px;
+  --shadow-card: rgba(0,0,0,0.08) 0px 0px 0px 1px, rgba(0,0,0,0.04) 0px 2px 2px;
+}
+
+.dark {
+  --background:           oklch(0.13 0.005 260);
+  --foreground:           oklch(0.95 0 0);
+  --card:                 oklch(0.17 0.005 260);
+  --card-foreground:      oklch(0.95 0 0);
+  --popover:              oklch(0.17 0.005 260);
+  --popover-foreground:   oklch(0.95 0 0);
+  --primary:              oklch(0.95 0 0);
+  --primary-foreground:   oklch(0.13 0.005 260);
+  --secondary:            oklch(0.22 0.005 260);
+  --secondary-foreground: oklch(0.85 0 0);
+  --muted:                oklch(0.22 0.005 260);
+  --muted-foreground:     oklch(0.55 0 0);
+  --accent:               oklch(0.22 0.005 260);
+  --accent-foreground:    oklch(0.85 0 0);
+  --destructive:          oklch(0.6 0.22 25);
+  --border:               oklch(0.25 0.005 260);
+  --input:                oklch(0.22 0.005 260);
+  --ring:                 oklch(0.52 0.22 255);
+  --sidebar:              oklch(0.17 0.005 260);
+  --sidebar-foreground:   oklch(0.95 0 0);
+  --sidebar-primary:      oklch(0.95 0 0);
+  --sidebar-primary-foreground: oklch(0.17 0.005 260);
+  --sidebar-accent:       oklch(0.22 0.005 260);
+  --sidebar-accent-foreground: oklch(0.85 0 0);
+  --sidebar-border:       oklch(0.25 0.005 260);
+  --sidebar-ring:         oklch(0.52 0.22 255);
+
+  /* Shadow-as-border — dark mode (lighter shadow on dark surface) */
+  --shadow-border: rgba(255, 255, 255, 0.08) 0px 0px 0px 1px;
+  --shadow-border-light: rgb(55, 55, 55) 0px 0px 0px 1px;
+  --shadow-card: rgba(255, 255, 255, 0.06) 0px 0px 0px 1px, rgba(0, 0, 0, 0.3) 0px 2px 2px;
+}
+
+body {
+  font-family: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  font-feature-settings: "liga" 1;
+  background-color: var(--background);
+  color: var(--foreground);
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+/* Directory tree folder icon — blue in light, lighter-blue in dark */
+.dir-folder-icon {
+  color: var(--develop-blue);
+}
+.dark .dir-folder-icon {
+  color: #60a5fa;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+@theme inline {
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, "SFMono-Regular", "Roboto Mono", Menlo, Monaco, "Courier New", monospace;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.67);  /* ~4px */
+  --radius-md: var(--radius);               /* 6px */
+  --radius-lg: calc(var(--radius) * 1.33);  /* 8px */
+  --radius-xl: calc(var(--radius) * 2);     /* 12px */
+  --radius-2xl: calc(var(--radius) * 2.67); /* 16px */
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Vercel shadow-border utility */
+.shadow-border {
+  box-shadow: var(--shadow-border);
+}
+.shadow-card {
+  box-shadow: var(--shadow-card);
+}

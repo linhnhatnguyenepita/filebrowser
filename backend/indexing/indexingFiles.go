@@ -780,7 +780,8 @@ func (idx *Index) fetchExtendedAttributes(indexPath string, files []os.FileInfo,
 	return hasPreview, subdirHasPreviewMap
 }
 
-// processDirectoryItem processes a directory item and returns the itemInfo, size, and whether it should be counted
+// processDirectoryItem processes a directory item and returns the itemInfo, size, and whether it should be counted.
+// Count is set directly on itemInfo.Count with the number of visible immediate children.
 func (idx *Index) processDirectoryItem(file os.FileInfo, indexPath string, subdirHasPreviewMap map[string]bool, opts Options, scanner *Scanner) (*iteminfo.ItemInfo, int64, bool) {
 	dirPath := indexPath + file.Name()
 
@@ -801,6 +802,9 @@ func (idx *Index) processDirectoryItem(file os.FileInfo, indexPath string, subdi
 		Type:    "directory",
 	}
 
+	childIndexPath := utils.AddTrailingSlashIfNotExists(dirPath)
+	childRealPath := filepath.Join(idx.Path, childIndexPath)
+
 	if opts.Recursive {
 		// Recursive: index the subdirectory
 		subdirSize, subdirHasPreview, err := idx.indexDirectory(dirPath, opts, scanner)
@@ -814,11 +818,12 @@ func (idx *Index) processDirectoryItem(file os.FileInfo, indexPath string, subdi
 		}
 		itemInfo.Size = subdirSize
 		itemInfo.HasPreview = subdirHasPreview
+		// Count actual visible children in the subdirectory
+		itemInfo.Count, _ = idx.countVisibleChildren(childRealPath, opts)
 		return itemInfo, itemInfo.Size, true
 	}
 
 	// Non-recursive: get folder size and hasPreview from cache
-	childIndexPath := utils.AddTrailingSlashIfNotExists(dirPath)
 	itemInfo.Size = idx.GetFolderSizeForDisplay(childIndexPath)
 
 	// Use batched hasPreview map if available
@@ -832,7 +837,79 @@ func (idx *Index) processDirectoryItem(file os.FileInfo, indexPath string, subdi
 		itemInfo.HasPreview = false
 	}
 
+	// Count actual visible children in the subdirectory
+	itemInfo.Count, _ = idx.countVisibleChildren(childRealPath, opts)
+
 	return itemInfo, itemInfo.Size, true
+}
+
+// countVisibleChildren returns the number of visible (non-hidden) immediate children in dirRealPath.
+// It applies the same filtering rules (ShowHidden, omitList, IsViewable/ShouldSkip) as GetDirInfoCore.
+func (idx *Index) countVisibleChildren(dirRealPath string, opts Options) (int64, error) {
+	childDir, err := os.Open(dirRealPath)
+	if err != nil {
+		return 0, err
+	}
+	defer childDir.Close()
+
+	entries, err := childDir.ReadDir(-1)
+	if err != nil {
+		return 0, err
+	}
+
+	// Derive the index path for this subdirectory from the real path.
+	// dirRealPath is like: idx.Path + childIndexPath (where childIndexPath is like "/subdirName/")
+	relPath, err := filepath.Rel(idx.Path, dirRealPath)
+	if err != nil {
+		return 0, err
+	}
+	childIndexPath := "/" + relPath + "/"
+	// Normalize any accidental double slashes (e.g., if idx.Path already ends with "/")
+	childIndexPath = strings.ReplaceAll(childIndexPath, "//", "/")
+
+	var count int64
+	for _, entry := range entries {
+		name := entry.Name()
+
+		// Skip hidden files if ShowHidden is false
+		if !opts.ShowHidden && name != "" && name[0] == '.' {
+			continue
+		}
+
+		// Skip non-indexable dirs
+		if omitList[name] {
+			continue
+		}
+
+		// Check IsViewable/ShouldSkip using the child path relative to the source
+		childFullPath := filepath.Join(dirRealPath, name)
+		hidden := IsHidden(childFullPath)
+		isDir := entry.IsDir()
+		var isSymlink bool
+		if !isDir {
+			stat, err := os.Lstat(childFullPath)
+			if err == nil {
+				isSymlink = stat.Mode()&os.ModeSymlink != 0
+			}
+		}
+
+		// Check viewable/indexable rules
+		isViewable := idx.IsViewable(isDir, childIndexPath, isSymlink, hidden)
+		isSkipped := idx.ShouldSkip(isDir, childIndexPath, hidden, isSymlink, opts.IsRoutineScan)
+		shouldSkip := false
+		if opts.CheckViewable {
+			shouldSkip = !isViewable && isSkipped
+		} else {
+			shouldSkip = isSkipped
+		}
+		if shouldSkip {
+			continue
+		}
+
+		count++
+	}
+
+	return count, nil
 }
 
 // processFileItem processes a file item and returns the itemInfo, size, shouldCount, and whether it bubbles up hasPreview
@@ -1538,9 +1615,6 @@ type DiskUsage struct {
 }
 
 func (idx *Index) SetUsage(totalBytes uint64) {
-	if settings.Config.Frontend.DisableUsedPercentage {
-		return
-	}
 	idx.mu.Lock()
 	defer idx.mu.Unlock()
 	idx.DiskTotal = totalBytes

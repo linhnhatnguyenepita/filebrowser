@@ -1,10 +1,10 @@
 server:
-  port: 80
+  port: 8080
   baseURL:  "/"
   logging:
     - levels: "info|warning|error"
   sources:
-    - path: "/srv"
+    - path: "./srv"
 userDefaults:
   editorQuickSave: false                  # show quick save button in editor
   hideSidebarFileActions: false           # hide the file actions in the sidebar
@@ -39,11 +39,11 @@ userDefaults:
   permissions:
     api: false                            # allow api access
     admin: false                          # allow admin access
-    modify: false                         # allow modifying files
-    share: false                          # allow sharing files
+    modify: true                         # allow modifying files
+    share: true                          # allow sharing files
     realtime: false                       # allow realtime updates
     delete: false                         # allow deleting files
-    create: false                         # allow creating or uploading files
+    create: true                         # allow creating or uploading files
     download: true                        # allow downloading files (defaults to true if not set)
   disableUpdateNotifications: false       # disable update notifications banner for admin users
   deleteWithoutConfirming: false          # delete files without confirmation

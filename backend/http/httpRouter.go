@@ -3,11 +3,7 @@ package http
 import (
 	"context"
 	"crypto/tls"
-	"embed"
-	"encoding/json"
 	"fmt"
-	"html/template"
-	"io/fs"
 	"net"
 	"net/http"
 	"time"
@@ -15,28 +11,15 @@ import (
 	_ "net/http/pprof"
 
 	"github.com/coreos/go-systemd/v22/activation"
-	"github.com/gtsteffaniak/filebrowser/backend/adapters/fs/fileutils"
 	"github.com/gtsteffaniak/filebrowser/backend/common/settings"
 	"github.com/gtsteffaniak/filebrowser/backend/database/storage/bolt"
 	"github.com/gtsteffaniak/filebrowser/backend/events"
 	"github.com/gtsteffaniak/go-logger/logger"
-	// http-swagger middleware
 )
 
-// Embed the files in the frontend/dist directory
-//
-//go:embed embed/*
-var assets embed.FS
-
-// GetEmbeddedAssets returns the embedded assets filesystem
-func GetEmbeddedAssets() embed.FS {
-	return assets
-}
-
 var (
-	store   *bolt.BoltStore
-	config  *settings.Settings
-	assetFs fs.FS
+	store  *bolt.BoltStore
+	config *settings.Settings
 )
 
 func StartHttp(ctx context.Context, storage *bolt.BoltStore, shutdownComplete chan struct{}) {
@@ -50,28 +33,6 @@ func StartHttp(ctx context.Context, storage *bolt.BoltStore, shutdownComplete ch
 				logger.Fatalf("pprof server error: %v", err)
 			}
 		}()
-	}
-
-	// Get the asset filesystem from fileutils
-	assetFs = fileutils.GetAssetFS()
-	if assetFs == nil {
-		logger.Fatal("Asset filesystem not initialized. Call fileutils.InitAssetFS first.")
-	}
-
-	// In development mode, we want to reload the templates on each request.
-	// In production (embedded), we parse them once.
-	templates := template.New("").Funcs(template.FuncMap{
-		"marshal": func(v interface{}) (string, error) {
-			a, err := json.Marshal(v)
-			return string(a), err
-		},
-	})
-	if !settings.Env.IsDevMode {
-		templates = template.Must(templates.ParseFS(assetFs, "public/index.html"))
-	}
-	templateRenderer = &TemplateRenderer{
-		templates: templates,
-		devMode:   settings.Env.IsDevMode,
 	}
 
 	// Core routing
@@ -119,6 +80,7 @@ func StartHttp(ctx context.Context, storage *bolt.BoltStore, shutdownComplete ch
 	api.HandleFunc("POST /resources/unarchive", withUser(unarchiveHandler))
 	api.HandleFunc("GET /resources/download", withUser(downloadHandler))
 	api.HandleFunc("GET /resources/preview", withTimeout(60*time.Second, withUserHelper(previewHandler)))
+	api.HandleFunc("GET /resources/metadata", withUser(metadataHandler))
 	publicApi.HandleFunc("GET /resources", withHashFile(publicGetResourceHandler))
 	publicApi.HandleFunc("GET /resources/items", withHashFile(publicItemsGetHandler))
 	publicApi.HandleFunc("POST /resources", withHashFile(publicUploadHandler))
@@ -216,21 +178,8 @@ func StartHttp(ctx context.Context, storage *bolt.BoltStore, shutdownComplete ch
 		router.Handle(webDavPath+"/{source}/{path...}", withBasicAuth(webDAVHandler))
 	}
 
-	// Frontend share route redirect (DEPRECATED - maintain for backwards compatibility)
-	// TODO: Playwright tests need updating to remove this redirect
-	router.HandleFunc(fmt.Sprintf("GET %vshare/", config.Server.BaseURL), withOrWithoutUser(redirectToShare))
-
-	// New frontend share route handler
-	publicRoutes.HandleFunc("GET /share/", withOrWithoutUser(indexHandler))
-
-	// Static assets
-	publicRoutes.Handle("GET /static/", http.HandlerFunc(staticAssetHandler))
-	router.HandleFunc("GET /favicon.svg", http.HandlerFunc(staticAssetHandler))
-
-	// Index and utility routes
-	router.HandleFunc(config.Server.BaseURL, withOrWithoutUser(indexHandler))
+	// Health endpoint
 	router.HandleFunc(fmt.Sprintf("GET %vhealth", config.Server.BaseURL), healthHandler)
-	router.Handle(fmt.Sprintf("%vswagger/", config.Server.BaseURL), withUser(swaggerHandler))
 
 	// Base URL redirect (non-root deployments)
 	if config.Server.BaseURL != "/" {

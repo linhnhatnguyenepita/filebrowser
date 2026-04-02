@@ -2029,6 +2029,78 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/resources/metadata": {
+            "get": {
+                "description": "Returns file metadata including audio album art, video/audio duration, and image dimensions.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Resources"
+                ],
+                "summary": "Get file metadata",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Index path to the file",
+                        "name": "path",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Source name",
+                        "name": "source",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/http.MetadataResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "File not found",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/resources/preview": {
             "get": {
                 "description": "Returns a preview image based on the requested path and size.",
@@ -3941,6 +4013,14 @@ const docTemplate = `{
                         "type": "string"
                     }
                 },
+                "folderCounts": {
+                    "description": "count per folder name; -1 if unreadable",
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                },
                 "folders": {
                     "type": "array",
                     "items": {
@@ -4017,6 +4097,35 @@ const docTemplate = `{
                 }
             }
         },
+        "http.FileMetadata": {
+            "type": "object",
+            "properties": {
+                "albumArt": {
+                    "description": "base64 data URI",
+                    "type": "string"
+                },
+                "artist": {
+                    "description": "audio artist",
+                    "type": "string"
+                },
+                "duration": {
+                    "description": "seconds (float for sub-second precision)",
+                    "type": "number"
+                },
+                "height": {
+                    "description": "image/video height (populated client-side)",
+                    "type": "integer"
+                },
+                "title": {
+                    "description": "audio/video title",
+                    "type": "string"
+                },
+                "width": {
+                    "description": "image/video width (populated client-side)",
+                    "type": "integer"
+                }
+            }
+        },
         "http.GroupListResponse": {
             "type": "object",
             "properties": {
@@ -4038,6 +4147,26 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "token": {
+                    "type": "string"
+                }
+            }
+        },
+        "http.MetadataResponse": {
+            "type": "object",
+            "properties": {
+                "metadata": {
+                    "$ref": "#/definitions/http.FileMetadata"
+                },
+                "modified": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "size": {
+                    "type": "integer"
+                },
+                "type": {
                     "type": "string"
                 }
             }
@@ -4444,6 +4573,10 @@ const docTemplate = `{
         "iteminfo.ExtendedItemInfo": {
             "type": "object",
             "properties": {
+                "count": {
+                    "description": "number of immediate children (for type==\"directory\"); -1 if not available",
+                    "type": "integer"
+                },
                 "hasPreview": {
                     "description": "whether the file has a thumbnail preview",
                     "type": "boolean"
@@ -4485,6 +4618,10 @@ const docTemplate = `{
         "iteminfo.FileInfo": {
             "type": "object",
             "properties": {
+                "count": {
+                    "description": "number of immediate children (for type==\"directory\"); -1 if not available",
+                    "type": "integer"
+                },
                 "files": {
                     "description": "files in the directory with optional metadata",
                     "type": "array",
@@ -4536,6 +4673,10 @@ const docTemplate = `{
         "iteminfo.ItemInfo": {
             "type": "object",
             "properties": {
+                "count": {
+                    "description": "number of immediate children (for type==\"directory\"); -1 if not available",
+                    "type": "integer"
+                },
                 "hasPreview": {
                     "description": "whether the file has a thumbnail preview",
                     "type": "boolean"

@@ -12,8 +12,9 @@ type ItemInfo struct {
 	ModTime    time.Time `json:"modified"`           // modification time
 	Type       string    `json:"type"`               // type of the file, either "directory" or a file mimetype
 	Hidden     bool      `json:"hidden"`             // whether the file is hidden
-	HasPreview bool      `json:"hasPreview"`         // whether the file has a thumbnail preview
-	IsShared   bool      `json:"isShared,omitempty"` // whether the file or folder is shared
+	HasPreview bool      `json:"hasPreview"`          // whether the file has a thumbnail preview
+	IsShared   bool      `json:"isShared,omitempty"`  // whether the file or folder is shared
+	Count      int64     `json:"count,omitempty"`     // number of immediate children (for type=="directory"); -1 if not available
 }
 
 // ExtendedItemInfo extends ItemInfo with optional metadata that's only populated on-demand
