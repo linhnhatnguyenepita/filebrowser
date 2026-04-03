@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
 import type { FileInfo } from "@/lib/api/resources";
 import { getDownloadURL } from "@/lib/api/resources";
 import { getAuthHeader } from "@/lib/api/client";
+import VideoPlayer from "@/components/player/createVideoPlayer";
 
 interface VideoPreviewProps {
   file: FileInfo;
@@ -45,14 +45,6 @@ export default function VideoPreview({ file }: VideoPreviewProps) {
     };
   }, [file]);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="flex items-center justify-center h-64 text-destructive">
@@ -61,17 +53,17 @@ export default function VideoPreview({ file }: VideoPreviewProps) {
     );
   }
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-xl overflow-hidden bg-secondary/50 flex items-center justify-center max-h-[80vh]">
-      {blobUrl && (
-        <video
-          controls
-          src={blobUrl}
-          className="max-w-[90vw] max-h-[80vh]"
-        >
-          <track kind="captions" />
-        </video>
-      )}
+      {blobUrl && <VideoPlayer src={blobUrl} className="max-w-[90vw] max-h-[80vh]" />}
     </div>
   );
 }
