@@ -100,7 +100,7 @@ export default function ShareFileList({ items, hash, currentPath, onNavigate }: 
             role="button"
             onKeyDown={(e) => e.key === "Enter" && handleItemClick(item)}
             aria-label={`${item.name}${isDir ? " (folder)" : ""}`}
-            className="grid grid-cols-[1fr_100px_140px_40px] items-center gap-4 px-4 py-2.5 cursor-pointer transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
+            className="group grid grid-cols-[1fr_100px_140px_40px] items-center gap-4 px-4 py-2.5 cursor-pointer transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset"
             style={!isLast ? { borderBottom: "1px solid var(--border)" } : {}}
           >
             <div className="flex items-center gap-3 min-w-0">
