@@ -1,4 +1,4 @@
-// Typed fetch wrapper with cookie-based auth, auto token renewal, and 401 redirect.
+// Typed fetch wrapper with token-based auth, auto token renewal, and 401 redirect.
 
 interface ApiError {
   status: number;
@@ -13,6 +13,19 @@ declare global {
 
 function getBaseURL(): string {
   return window.globalVars?.baseURL ?? "/";
+}
+
+export function setToken(token: string): void {
+  localStorage.setItem("filebrowser_token", token);
+}
+
+export function clearToken(): void {
+  localStorage.removeItem("filebrowser_token");
+}
+
+export function getAuthHeader(): Record<string, string> {
+  const token = localStorage.getItem("filebrowser_token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
 export function apiPath(endpoint: string, params?: Record<string, string | string[]>): string {
@@ -40,16 +53,22 @@ export async function apiFetch<T = unknown>(
     credentials: "same-origin",
     ...opts,
     headers: {
+      ...getAuthHeader(),
       ...opts.headers,
     },
   });
 
   // Auto-renew token when backend signals near-expiry
   if (res.headers.get("X-Renew-Token") === "true") {
-    await fetch(apiPath("auth/renew"), {
+    const renewRes = await fetch(apiPath("auth/renew"), {
       method: "POST",
       credentials: "same-origin",
+      headers: getAuthHeader(),
     });
+    if (renewRes.ok) {
+      const newToken = await renewRes.text();
+      if (newToken) setToken(newToken.trim());
+    }
   }
 
   if (res.status === 401) {

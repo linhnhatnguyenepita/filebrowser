@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import type { FileInfo } from "@/lib/api/resources";
 import { getDownloadURL } from "@/lib/api/resources";
+import { getAuthHeader } from "@/lib/api/client";
 
 interface TextPreviewProps {
   file: FileInfo;
@@ -30,7 +31,7 @@ export default function TextPreview({ file }: TextPreviewProps) {
 
     const url = getDownloadURL(file.source ?? "default", file.path);
 
-    fetch(url, { credentials: "same-origin" })
+    fetch(url, { credentials: "same-origin", headers: getAuthHeader() })
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.text();

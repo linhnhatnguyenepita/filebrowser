@@ -3,6 +3,7 @@ import { Music, Pause, Play, SkipBack, SkipForward, Volume2 } from "lucide-react
 import type { FileInfo } from "@/lib/api/resources";
 import { fetchMetadata } from "@/lib/api/metadata";
 import { getDownloadURL } from "@/lib/api/resources";
+import { getAuthHeader } from "@/lib/api/client";
 
 interface AudioPreviewProps {
   file: FileInfo;
@@ -54,7 +55,7 @@ export default function AudioPreview({ file }: AudioPreviewProps) {
 
     // Fetch audio blob
     const url = getDownloadURL(source, file.path);
-    fetch(url, { credentials: "same-origin" })
+    fetch(url, { credentials: "same-origin", headers: getAuthHeader() })
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.blob();

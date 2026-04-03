@@ -77,6 +77,12 @@ func setupEnv() {
 	if Env.IsDevMode {
 		logger.Warning("Running in dev mode. This is not recommended for production.")
 	}
+	if val := os.Getenv("FILEBROWSER_ADMIN_USERNAME"); val != "" {
+		Config.Auth.AdminUsername = val
+	}
+	if val := os.Getenv("FILEBROWSER_ADMIN_PASSWORD"); val != "" {
+		Config.Auth.AdminPassword = val
+	}
 }
 
 func setupFs() {
