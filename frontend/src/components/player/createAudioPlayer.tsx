@@ -6,15 +6,14 @@ const AudioPlayer = createPlayer({ features: audioFeatures });
 
 interface AudioPlayerProps {
   src: string;
-  poster?: string;
   className?: string;
 }
 
-export default function AudioPlayerComponent({ src, poster, className }: AudioPlayerProps) {
+export default function AudioPlayerComponent({ src, className }: AudioPlayerProps) {
   return (
     <AudioPlayer.Provider>
       <AudioSkin className={className}>
-        <Audio src={src} poster={poster} preload="metadata" />
+        <Audio src={src} preload="metadata" />
       </AudioSkin>
     </AudioPlayer.Provider>
   );
