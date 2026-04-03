@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { AdminUser } from "@/lib/api/users";
@@ -39,10 +39,6 @@ export default function UserForm({ user, onSubmit, onCancel, saving }: UserFormP
   });
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    setError(null);
-  }, [username, password, scope]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isEdit && !password.trim()) {
@@ -74,7 +70,7 @@ export default function UserForm({ user, onSubmit, onCancel, saving }: UserFormP
         ) : (
           <Input
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(e) => { setUsername(e.target.value); setError(null); }}
             placeholder="username"
             required
           />
@@ -88,7 +84,7 @@ export default function UserForm({ user, onSubmit, onCancel, saving }: UserFormP
         <Input
           type="password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => { setPassword(e.target.value); setError(null); }}
           placeholder={isEdit ? "(unchanged)" : "password"}
           required={!isEdit}
         />
@@ -98,7 +94,7 @@ export default function UserForm({ user, onSubmit, onCancel, saving }: UserFormP
         <label className="text-xs font-medium text-foreground">Scope</label>
         <Input
           value={scope}
-          onChange={(e) => setScope(e.target.value)}
+          onChange={(e) => { setScope(e.target.value); setError(null); }}
           placeholder="global"
         />
       </div>

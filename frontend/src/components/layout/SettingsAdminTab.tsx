@@ -80,7 +80,7 @@ export default function SettingsAdminTab() {
     try {
       await deleteUser(id);
       setUsers((prev) => prev.filter((u) => u.id !== id));
-    } catch (e: unknown) {
+    } catch {
       // Keep row visible on error
     } finally {
       setDeletingId(null);
