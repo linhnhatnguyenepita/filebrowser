@@ -20,6 +20,12 @@ export interface User {
   singleClick: boolean;
   showHidden: boolean;
   stickySidebar: boolean;
+  fileLoading?: {
+    maxConcurrentUpload?: number;
+    uploadChunkSizeMb?: number;
+    clearAll?: boolean;
+    downloadChunkSizeMb?: number;
+  };
 }
 
 export async function getCurrentUser(): Promise<User> {
