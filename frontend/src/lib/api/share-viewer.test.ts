@@ -60,3 +60,53 @@ describe("getShareDownloadURL", () => {
     expect(url).toBe("https://example.com/public/api/resources/download?hash=abc123&path=%2Ffolder%2Ffile.txt");
   });
 });
+
+describe("getShareItems", () => {
+  it("returns items on 200", async () => {
+    const mockItems = {
+      files: [{ name: "file.txt" }],
+      folders: [{ name: "sub" }],
+    };
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve(mockItems),
+    } as Response);
+
+    const result = await getShareItems("abc123");
+    expect(result).toEqual(mockItems);
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://example.com/public/api/resources/items?hash=abc123&path=%2F",
+      { credentials: "same-origin" }
+    );
+  });
+
+  it("uses default path /", async () => {
+    const mockItems = {
+      files: [{ name: "file.txt" }],
+      folders: [{ name: "sub" }],
+    };
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve(mockItems),
+    } as Response);
+
+    await getShareItems("abc123");
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://example.com/public/api/resources/items?hash=abc123&path=%2F",
+      { credentials: "same-origin" }
+    );
+  });
+
+  it("throws on error", async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+      statusText: "Internal Server Error",
+      json: () => Promise.resolve({ message: "Internal error" }),
+    } as Response);
+
+    await expect(getShareItems("abc123")).rejects.toMatchObject({ status: 500 });
+  });
+});
