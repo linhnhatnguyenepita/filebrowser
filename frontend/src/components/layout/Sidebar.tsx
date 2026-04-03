@@ -5,8 +5,6 @@ import { getSources } from "@/lib/api/settings";
 import type { SourceInfo } from "@/lib/api/settings";
 import DirectoryTree from "./DirectoryTree";
 import SidebarFooter from "./SidebarFooter";
-import SidebarTabPanel from "./SidebarTabPanel";
-import type { TabId } from "./SidebarTabPanel";
 import { cn } from "@/lib/utils";
 
 interface SidebarProps {
@@ -18,7 +16,6 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
 
   const [sources, setSources] = useState<SourceInfo>({});
   const [sourceDropdownOpen, setSourceDropdownOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<TabId>("none");
 
   useEffect(() => {
     getSources()
@@ -95,20 +92,16 @@ export default function Sidebar({ onNavigate }: SidebarProps) {
         )}
       </div>
 
-      {/* Directory tree or panel */}
-      {activeTab === "none" ? (
-        <div className="flex-1 overflow-hidden px-2">
-          <DirectoryTree
-            source={activeSource}
-            activePath={activePath}
-            onNavigate={(path) => onNavigate(path)}
-          />
-        </div>
-      ) : (
-        <SidebarTabPanel activeTab={activeTab} onClose={() => setActiveTab("none")} />
-      )}
+      {/* Directory tree */}
+      <div className="flex-1 overflow-hidden px-2">
+        <DirectoryTree
+          source={activeSource}
+          activePath={activePath}
+          onNavigate={(path) => onNavigate(path)}
+        />
+      </div>
 
-      <SidebarFooter activeTab={activeTab} onTabChange={setActiveTab} />
+      <SidebarFooter />
     </aside>
   );
 }

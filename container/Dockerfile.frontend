@@ -3,7 +3,7 @@ WORKDIR /app
 
 # Install deps at build time (cached layer — only re-runs when package*.json changes)
 COPY package*.json ./
-RUN npm ci
+RUN npm i
 
 # Copy remaining config files (index.html, tsconfig, vite.config.ts, etc.)
 # src/ and public/ will be overridden by bind-mounts at runtime

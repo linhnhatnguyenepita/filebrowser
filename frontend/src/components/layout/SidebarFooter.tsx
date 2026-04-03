@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LogOut, Settings, ChevronDown } from "lucide-react";
+import { LogOut, ChevronDown } from "lucide-react";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import {
   DropdownMenu,
@@ -9,14 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-type TabId = "none" | "settings";
-
-interface SidebarFooterProps {
-  activeTab: TabId;
-  onTabChange: (tab: TabId) => void;
-}
-
-export default function SidebarFooter({ activeTab, onTabChange }: SidebarFooterProps) {
+export default function SidebarFooter() {
   const { logout, user } = useAuthStore();
   const [loggingOut, setLoggingOut] = useState(false);
 
@@ -63,12 +56,6 @@ export default function SidebarFooter({ activeTab, onTabChange }: SidebarFooterP
             <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52">
-            <DropdownMenuItem
-              onClick={() => onTabChange(activeTab === "settings" ? "none" : "settings")}
-            >
-              <Settings className="h-4 w-4 mr-2" />
-              Settings
-            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={handleLogout}
