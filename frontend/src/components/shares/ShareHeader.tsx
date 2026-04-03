@@ -1,5 +1,5 @@
 import { Download, ExternalLink } from "lucide-react";
-import { ShareInfo } from "@/lib/types/share-viewer";
+import type { ShareInfo } from "@/lib/types/share-viewer";
 import { getShareDownloadURL } from "@/lib/api/share-viewer";
 
 interface Props {

@@ -1,6 +1,6 @@
 // frontend/src/lib/api/share-viewer.ts
 
-import { ShareInfo } from "@/lib/types/share-viewer";
+import type { ShareInfo } from "@/lib/types/share-viewer";
 import type { FileInfo } from "@/lib/api/resources";
 
 function getBaseURL(): string {

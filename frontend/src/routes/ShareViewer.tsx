@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { ShareInfo } from "@/lib/types/share-viewer";
+import type { ShareInfo } from "@/lib/types/share-viewer";
 import { getShareItems } from "@/lib/api/share-viewer";
 import type { FileInfo } from "@/lib/api/resources";
 import ShareInfoLoader from "@/components/shares/ShareInfoLoader";

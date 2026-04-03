@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from "react";
-import { ShareInfo } from "@/lib/types/share-viewer";
+import type { ShareInfo } from "@/lib/types/share-viewer";
 import { getShareInfo } from "@/lib/api/share-viewer";
 
 interface Props {
