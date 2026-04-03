@@ -1,22 +1,24 @@
 import { useState } from "react";
-import { User, Settings, Shield } from "lucide-react";
+import { User, Settings, Shield, Link2 } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import { cn } from "@/lib/utils";
 import SettingsProfileTab from "./SettingsProfileTab";
 import SettingsSettingsTab from "./SettingsSettingsTab";
 import SettingsAdminTab from "./SettingsAdminTab";
+import ShareTab from "@/components/shares/ShareTab";
 
-type TabId = "profile" | "settings" | "admin";
+type TabId = "profile" | "settings" | "admin" | "shares";
 
 interface SettingsDialogProps {
   open: boolean;
   onClose: () => void;
+  initialTab?: TabId;
 }
 
-export default function SettingsDialog({ open, onClose }: SettingsDialogProps) {
+export default function SettingsDialog({ open, onClose, initialTab }: SettingsDialogProps) {
   const { user } = useAuthStore();
-  const [activeTab, setActiveTab] = useState<TabId>("profile");
+  const [activeTab, setActiveTab] = useState<TabId>(initialTab ?? "profile");
 
   const isAdmin = user?.permissions?.admin === true;
 
@@ -24,19 +26,20 @@ export default function SettingsDialog({ open, onClose }: SettingsDialogProps) {
     { id: "profile", label: "Profile", icon: <User size={16} /> },
     { id: "settings", label: "Settings", icon: <Settings size={16} /> },
     { id: "admin", label: "Admin", icon: <Shield size={16} />, adminOnly: true },
+    { id: "shares", label: "Shares", icon: <Link2 size={16} /> },
   ];
 
   const visibleTabs = tabs.filter((t) => !t.adminOnly || isAdmin);
 
   // Reset to profile tab when dialog opens
   const handleOpenChange = (o: boolean) => {
-    if (o) setActiveTab("profile");
+    if (o) setActiveTab(initialTab ?? "profile");
     if (!o) onClose();
   };
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-2xl p-0 overflow-hidden flex max-h-[85vh]">
+      <DialogContent className="max-w-2xl p-0 overflow-hidden flex h-[80vh]">
         {/* Vertical tab rail */}
         <div className="flex flex-col w-36 shrink-0 bg-muted border-r border-border">
           {visibleTabs.map((tab) => (
@@ -61,6 +64,7 @@ export default function SettingsDialog({ open, onClose }: SettingsDialogProps) {
           {activeTab === "profile" && <SettingsProfileTab />}
           {activeTab === "settings" && <SettingsSettingsTab />}
           {activeTab === "admin" && isAdmin && <SettingsAdminTab />}
+          {activeTab === "shares" && <ShareTab />}
         </div>
       </DialogContent>
     </Dialog>

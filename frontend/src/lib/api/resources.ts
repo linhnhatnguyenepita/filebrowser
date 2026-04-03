@@ -9,7 +9,7 @@ export interface FileInfo {
   hasPreview: boolean;
   isShared: boolean;
   path: string;
-  source?: string;
+  source: string;
   count?: number; // number of immediate children; present only for type === "directory"
 }
 

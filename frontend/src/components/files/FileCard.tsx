@@ -1,5 +1,5 @@
 import { useRef, useCallback } from "react";
-import { MoreHorizontal, Download, Pencil, FolderInput, Copy, Trash2 } from "lucide-react";
+import { MoreHorizontal, Download, Pencil, FolderInput, Copy, Trash2, Link2 } from "lucide-react";
 import type { FileInfo } from "@/lib/api/resources";
 import { getDownloadURL } from "@/lib/api/resources";
 import { useFileStore } from "@/lib/stores/file-store";
@@ -30,8 +30,8 @@ interface FileCardProps {
 }
 
 export default function FileCard({ item, onNavigate }: FileCardProps) {
-  const { selected, toggleSelect, source, setPreviewFile } = useFileStore();
-  const { openDialog } = useUIStore();
+  const { selected, toggleSelect, source, setPreviewFile, setSelectedForShare } = useFileStore();
+  const { openDialog, openSettings } = useUIStore();
   const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isSelected = selected.has(item.name);
   const isDir = item.type === "directory";
@@ -139,6 +139,11 @@ export default function FileCard({ item, onNavigate }: FileCardProps) {
             <DropdownMenuItem onClick={(e) => { e.stopPropagation(); ensureSelected(); openDialog("moveCopy"); }}>
               <Copy className="h-4 w-4" />
               Copy
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setSelectedForShare(item); openSettings("shares"); }}>
+              <Link2 className="h-4 w-4" />
+              Share
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive" onClick={(e) => { e.stopPropagation(); ensureSelected(); openDialog("delete"); }}>

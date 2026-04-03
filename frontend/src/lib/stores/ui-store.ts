@@ -10,12 +10,16 @@ interface UIState {
   searchError: string | null;
   activeDialog: string | null;
   sidebarOpen: boolean;
+  settingsOpen: boolean;
+  settingsInitialTab: string | null;
   setViewMode: (mode: "grid" | "list") => void;
   search: (query: string, source: string) => Promise<void>;
   clearSearch: () => void;
   openDialog: (name: string) => void;
   closeDialog: () => void;
   toggleSidebar: () => void;
+  openSettings: (tab?: string) => void;
+  closeSettings: () => void;
 }
 
 export const useUIStore = create<UIState>((set) => ({
@@ -26,6 +30,8 @@ export const useUIStore = create<UIState>((set) => ({
   searchError: null,
   activeDialog: null,
   sidebarOpen: true,
+  settingsOpen: false,
+  settingsInitialTab: null,
   setViewMode: (mode) => set({ viewMode: mode }),
   search: async (query, source) => {
     set({ searchQuery: query, searchLoading: true, searchError: null });
@@ -42,4 +48,6 @@ export const useUIStore = create<UIState>((set) => ({
   openDialog: (name) => set({ activeDialog: name }),
   closeDialog: () => set({ activeDialog: null }),
   toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
+  openSettings: (tab?: string) => set({ settingsOpen: true, settingsInitialTab: tab ?? null }),
+  closeSettings: () => set({ settingsOpen: false, settingsInitialTab: null }),
 }));

@@ -1,5 +1,5 @@
 import { useRef, useCallback } from "react";
-import { MoreHorizontal, Download, Pencil, FolderInput, Copy, Trash2 } from "lucide-react";
+import { MoreHorizontal, Download, Pencil, FolderInput, Copy, Trash2, Link2 } from "lucide-react";
 import type { FileInfo } from "@/lib/api/resources";
 import { getDownloadURL } from "@/lib/api/resources";
 import { useFileStore } from "@/lib/stores/file-store";
@@ -41,8 +41,8 @@ interface FileRowProps {
 }
 
 export default function FileRow({ item, onNavigate, isLast }: FileRowProps) {
-  const { selected, toggleSelect, source, setPreviewFile } = useFileStore();
-  const { openDialog } = useUIStore();
+  const { selected, toggleSelect, source, setPreviewFile, setSelectedForShare } = useFileStore();
+  const { openDialog, openSettings } = useUIStore();
   const clickTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isSelected = selected.has(item.name);
   const isDir = item.type === "directory";
@@ -178,6 +178,10 @@ export default function FileRow({ item, onNavigate, isLast }: FileRowProps) {
             Copy
           </DropdownMenuItem>
           <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setSelectedForShare(item); openSettings("shares"); }}>
+            <Link2 className="h-4 w-4" />
+            Share
+          </DropdownMenuItem>
           <DropdownMenuItem variant="destructive" onClick={(e) => { e.stopPropagation(); ensureSelected(); openDialog("delete"); }}>
             <Trash2 className="h-4 w-4" />
             Delete

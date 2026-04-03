@@ -5,6 +5,7 @@ import {
   FolderInput,
   Copy,
   Trash2,
+  Link2,
 } from "lucide-react";
 import type { FileInfo } from "@/lib/api/resources";
 import { getDownloadURL } from "@/lib/api/resources";
@@ -24,8 +25,8 @@ interface FileContextMenuProps {
 }
 
 export default function FileContextMenu({ item, children }: FileContextMenuProps) {
-  const { source, toggleSelect, selected } = useFileStore();
-  const { openDialog } = useUIStore();
+  const { source, toggleSelect, selected, setSelectedForShare } = useFileStore();
+  const { openDialog, openSettings } = useUIStore();
   const isDir = item.type === "directory";
 
   const ensureSelected = () => {
@@ -58,6 +59,11 @@ export default function FileContextMenu({ item, children }: FileContextMenuProps
     openDialog("delete");
   };
 
+  const handleShare = () => {
+    setSelectedForShare(item);
+    openSettings("shares");
+  };
+
   return (
     <ContextMenu>
       <ContextMenuTrigger className="contents">{children}</ContextMenuTrigger>
@@ -84,6 +90,10 @@ export default function FileContextMenu({ item, children }: FileContextMenuProps
           Copy
         </ContextMenuItem>
         <ContextMenuSeparator />
+        <ContextMenuItem onClick={handleShare}>
+          <Link2 size={14} />
+          Share
+        </ContextMenuItem>
         <ContextMenuItem variant="destructive" onClick={handleDelete}>
           <Trash2 size={14} />
           Delete

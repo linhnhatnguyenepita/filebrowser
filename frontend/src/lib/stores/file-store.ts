@@ -12,12 +12,14 @@ interface FileState {
   sortBy: "name" | "size" | "modified";
   sortAsc: boolean;
   previewFile: FileInfo | null;
+  selectedForShare: FileInfo | null;
   fetchDirectory: (path: string, source: string) => Promise<void>;
   toggleSelect: (name: string) => void;
   selectAll: () => void;
   clearSelection: () => void;
   setSorting: (by: "name" | "size" | "modified", asc: boolean) => void;
   setPreviewFile: (file: FileInfo | null) => void;
+  setSelectedForShare: (file: FileInfo | null) => void;
 }
 
 function buildItems(data: DirectoryResponse): FileInfo[] {
@@ -70,4 +72,6 @@ set({ loading: true, path, source, selected: new Set() });
   setSorting: (by, asc) => set({ sortBy: by, sortAsc: asc }),
   previewFile: null,
   setPreviewFile: (file) => set({ previewFile: file }),
+  selectedForShare: null,
+  setSelectedForShare: (file) => set({ selectedForShare: file }),
 }));

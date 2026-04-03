@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { LogOut, ChevronDown, Settings2 } from "lucide-react";
 import { useAuthStore } from "@/lib/stores/auth-store";
+import { useUIStore } from "@/lib/stores/ui-store";
 import SettingsDialog from "./SettingsDialog";
 import { getStorage } from "@/lib/api/storage";
 import { formatBytes } from "@/lib/utils";
@@ -14,9 +15,9 @@ import {
 
 export default function SidebarFooter() {
   const { logout, user } = useAuthStore();
-  const [loggingOut, setLoggingOut] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  const { settingsOpen, settingsInitialTab, openSettings, closeSettings } = useUIStore();
   const [storage, setStorage] = useState<{ total: number; free: number } | null>(null);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
     getStorage()
@@ -24,8 +25,8 @@ export default function SidebarFooter() {
       .catch(() => {});
   }, []);
 
-  const used = storage ? storage.total - storage.free : null;
-  const pct = storage ? Math.round((used / storage.total) * 100) : null;
+  const used = storage ? storage.total - storage.free : 0;
+  const pct = storage ? Math.round((used / storage.total) * 100) : 0;
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -65,7 +66,7 @@ export default function SidebarFooter() {
         {/* User row: avatar pill opens settings dialog */}
         <div className="p-3 flex items-center gap-2">
           <button
-            onClick={() => setSettingsOpen(true)}
+            onClick={() => openSettings()}
             className="flex flex-1 items-center gap-3 rounded-md p-2 transition-colors hover:bg-accent text-left cursor-pointer bg-transparent border-0"
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground text-xs font-semibold shrink-0">
@@ -83,7 +84,7 @@ export default function SidebarFooter() {
 
           {/* Settings gear icon */}
           <button
-            onClick={() => setSettingsOpen(true)}
+            onClick={() => openSettings()}
             className="p-2 rounded-md hover:bg-accent transition-colors text-muted-foreground hover:text-foreground cursor-pointer bg-transparent border-0"
             title="Settings"
           >
@@ -109,7 +110,7 @@ export default function SidebarFooter() {
         </div>
       </div>
 
-      <SettingsDialog open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <SettingsDialog open={settingsOpen} onClose={closeSettings} initialTab={(settingsInitialTab ?? undefined) as "profile" | "settings" | "admin" | "shares" | undefined} />
     </>
   );
 }
