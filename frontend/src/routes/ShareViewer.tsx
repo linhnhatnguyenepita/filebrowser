@@ -69,17 +69,6 @@ function ShareViewerInner({ hash, location }: { hash: string; location: ReturnTy
     [navigate, hash]
   );
 
-  const handleFileClick = useCallback(
-    (item: FileInfo) => {
-      if (item.type === "directory") {
-        const newPath = rawPath === "/" ? `/${item.name}` : `${rawPath}/${item.name}`;
-        handleNavigate(newPath);
-      }
-      // Files are handled by FileGrid/FileList internally
-    },
-    [handleNavigate, rawPath]
-  );
-
   if (itemsError) {
     if (itemsError.status === 403) {
       return <ShareError title="Folder not found" description="This folder does not exist." />;
@@ -92,6 +81,7 @@ function ShareViewerInner({ hash, location }: { hash: string; location: ReturnTy
   return (
     <ShareInfoLoader hash={hash}>
       {(info: ShareInfo) => {
+        // compact/normal/gallery all map to grid; only "list" uses the list layout
         const viewMode = info.viewMode === "list" ? "list" : "grid";
         const allItems: FileInfo[] = [
           ...(items?.folders ?? []).filter(f => info.showHidden || !f.hidden),
@@ -103,7 +93,6 @@ function ShareViewerInner({ hash, location }: { hash: string; location: ReturnTy
             <ShareHeader info={info} hash={hash} items={items ?? { files: [], folders: [] }} />
 
             <ShareBreadcrumb
-              shareHash={hash}
               shareTitle={info.title}
               shareURL={info.shareURL}
               currentPath={rawPath}

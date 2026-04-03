@@ -5,6 +5,8 @@ interface Props {
 }
 
 export default function ShareFooter({ sourceURL }: Props) {
+  if (!sourceURL) return null;
+
   const originLabel = (() => {
     try {
       const u = new URL(sourceURL);

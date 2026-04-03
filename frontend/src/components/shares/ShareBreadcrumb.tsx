@@ -1,5 +1,4 @@
 import { ChevronRight, Home } from "lucide-react";
-import { Link } from "react-router-dom";
 
 interface Segment {
   label: string;
@@ -7,7 +6,6 @@ interface Segment {
 }
 
 interface Props {
-  shareHash: string;
   shareTitle: string;
   shareURL: string;
   currentPath: string;
@@ -15,7 +13,6 @@ interface Props {
 }
 
 export default function ShareBreadcrumb({
-  shareHash,
   shareTitle,
   shareURL,
   currentPath,
@@ -46,13 +43,13 @@ export default function ShareBreadcrumb({
                   {seg.label}
                 </span>
               ) : seg.path === "" ? (
-                <Link
-                  to={shareURL}
+                <a
+                  href={shareURL}
                   className="hover:text-foreground transition-colors flex items-center gap-1"
                 >
                   <Home className="h-3 w-3" />
                   {seg.label}
-                </Link>
+                </a>
               ) : (
                 <button
                   onClick={() => onNavigate(seg.path)}

@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import type { ShareInfo } from "@/lib/types/share-viewer";
 import { getShareInfo } from "@/lib/api/share-viewer";
+import ShareError from "./ShareError";
 
 interface Props {
   hash: string;
@@ -36,16 +37,13 @@ export default function ShareInfoLoader({ hash, children }: Props) {
   }, [hash]);
 
   if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-secondary p-6">
-        <div className="max-w-sm w-full text-center space-y-4">
-          <h1 className="text-xl font-semibold text-foreground">
-            {error.status === 404 ? "Share not found" : error.status === 403 ? "Share expired" : "Could not load share"}
-          </h1>
-          <p className="text-sm text-muted-foreground">{error.message}</p>
-        </div>
-      </div>
-    );
+    if (error.status === 404) {
+      return <ShareError title="Share not found" description="This share link does not exist or has been removed." action={{ label: "Go to FileBrowser", href: "/" }} />;
+    }
+    if (error.status === 403) {
+      return <ShareError title="Share expired" description="This share link has expired." />;
+    }
+    return <ShareError title="Could not load share" description={error.message} />;
   }
 
   if (!info) {
