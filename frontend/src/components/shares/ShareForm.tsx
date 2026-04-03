@@ -2,9 +2,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { ShareResponse } from "@/lib/api/shares";
+import type { FileInfo } from "@/lib/api/resources";
 
 interface ShareFormProps {
   share?: ShareResponse;
+  selectedFile?: FileInfo | null;
   onSubmit: (data: { password?: string; expires?: string; unit?: string }) => Promise<void>;
   onCancel: () => void;
   saving?: boolean;
@@ -15,7 +17,7 @@ const UNIT_OPTIONS = [
   { value: "days", label: "Days" },
 ];
 
-export default function ShareForm({ share, onSubmit, onCancel, saving }: ShareFormProps) {
+export default function ShareForm({ share, selectedFile, onSubmit, onCancel, saving }: ShareFormProps) {
   const isEdit = !!share;
 
   const [password, setPassword] = useState("");
@@ -46,17 +48,29 @@ export default function ShareForm({ share, onSubmit, onCancel, saving }: ShareFo
       {isEdit && (
         <div className="space-y-1">
           <label className="text-xs font-medium text-muted-foreground">Path</label>
-          <p className="text-sm font-mono text-foreground py-1.5 bg-background border border-border rounded px-2">
+          <p className="text-sm font-mono text-foreground py-1.5 bg-background border border-border rounded px-2 truncate" title={`${share.source}://${share.path}`}>
             {share.source}://{share.path}
           </p>
         </div>
       )}
 
-      <div className="space-y-1">
-        <p className="text-xs py-1.5 text-muted-foreground italic">
-          Click a file or folder in the file browser to share it.
-        </p>
-      </div>
+      {!isEdit && selectedFile && (
+        <div className="space-y-1">
+          <label className="text-xs font-medium text-muted-foreground">Sharing</label>
+          <p className="text-sm font-mono text-foreground py-1.5 bg-background border border-border rounded px-2 truncate" title={`${selectedFile.source}://${selectedFile.path}`}>
+            {selectedFile.type === "directory" ? "📁 " : "📄 "}
+            {selectedFile.source}://{selectedFile.path}
+          </p>
+        </div>
+      )}
+
+      {!isEdit && !selectedFile && (
+        <div className="space-y-1">
+          <p className="text-xs py-1.5 text-muted-foreground italic">
+            No file or folder selected. Close this dialog and click Share on a file or folder first.
+          </p>
+        </div>
+      )}
 
       <div className="space-y-1">
         <label className="text-xs font-medium text-muted-foreground">
@@ -116,7 +130,7 @@ export default function ShareForm({ share, onSubmit, onCancel, saving }: ShareFo
         <Button type="button" variant="ghost" onClick={onCancel} disabled={saving}>
           Cancel
         </Button>
-        <Button type="submit" disabled={saving}>
+        <Button type="submit" disabled={saving || (!isEdit && !selectedFile)}>
           {saving ? "Saving…" : isEdit ? "Update Share" : "Create Share"}
         </Button>
       </div>

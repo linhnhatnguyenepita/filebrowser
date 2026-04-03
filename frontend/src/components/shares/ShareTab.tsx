@@ -49,6 +49,13 @@ export default function ShareTab() {
     loadShares();
   }, [loadShares]);
 
+  // Auto-open the create form when a file/folder is selected for sharing from context menu
+  useEffect(() => {
+    if (selectedForShare && !showForm && !editShare) {
+      setShowForm(true);
+    }
+  }, [selectedForShare, showForm, editShare]);
+
   const filteredShares = shares.filter((s) => {
     const term = filter.toLowerCase();
     return (
@@ -171,6 +178,7 @@ export default function ShareTab() {
               )}
               <ShareForm
                 share={editShare}
+                selectedFile={editShare ? undefined : selectedForShare}
                 onSubmit={handleFormSubmit}
                 onCancel={() => {
                   setShowForm(false);
