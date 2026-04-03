@@ -3,8 +3,8 @@ services:
     build:
       context: ../
       dockerfile: container/Dockerfile.backend
-    ports:
-      - "2818:8080"
+    expose:
+      - "8080"
     volumes:
       - ./data:/home/filebrowser/data
       - ./data/config.yaml:/home/filebrowser/config.yaml:ro
