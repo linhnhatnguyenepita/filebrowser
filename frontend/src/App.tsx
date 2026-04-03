@@ -4,6 +4,7 @@ import { useAuthStore } from "@/lib/stores/auth-store";
 import { Toaster } from "@/components/ui/sonner";
 import Login from "@/routes/Login";
 import FileBrowser from "@/routes/FileBrowser";
+import ShareViewer from "@/routes/ShareViewer";
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, loading, fetchUser } = useAuthStore();
@@ -42,6 +43,7 @@ export default function App() {
     <>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/public/share/:hash/*" element={<ShareViewer />} />
         <Route path="/files/*" element={<AuthGuard><FileBrowser /></AuthGuard>} />
         <Route path="*" element={<Navigate to="/files" replace />} />
       </Routes>
