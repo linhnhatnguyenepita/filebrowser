@@ -64,3 +64,62 @@ export async function updateUserPreferences(currentUser: User, prefs: Partial<Us
     body: JSON.stringify({ which, data: { ...currentUser, ...prefs } }),
   });
 }
+
+export interface AdminUser {
+  id: number;
+  username: string;
+  password?: string;
+  scope: string;
+  scopes: Array<{ name: string; scope: string }>;
+  permissions: {
+    admin: boolean;
+    modify: boolean;
+    share: boolean;
+    create: boolean;
+    delete: boolean;
+    download: boolean;
+    api: boolean;
+    realtime: boolean;
+  };
+  loginMethod?: string;
+  locale: string;
+  sorting: { by: string; asc: boolean };
+  viewMode: string;
+  singleClick: boolean;
+  showHidden: boolean;
+  stickySidebar: boolean;
+  fileLoading: {
+    maxConcurrentUpload: number;
+    uploadChunkSizeMb: number;
+    clearAll: boolean;
+    downloadChunkSizeMb: number;
+  };
+}
+
+export async function getUsers(): Promise<AdminUser[]> {
+  return apiFetch<AdminUser[]>(apiPath("users"));
+}
+
+export async function deleteUser(id: number): Promise<void> {
+  await apiFetch(apiPath("users", { id: String(id) }), { method: "DELETE" });
+}
+
+export async function createUser(userData: Partial<AdminUser>): Promise<void> {
+  await apiFetch(apiPath("users"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ which: [], data: userData }),
+  });
+}
+
+export async function updateUser(
+  id: number,
+  userData: Partial<AdminUser>,
+  which: string[]
+): Promise<void> {
+  await apiFetch(apiPath("users", { id: String(id) }), {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ which, data: { ...userData, id } }),
+  });
+}
