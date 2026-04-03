@@ -10,8 +10,8 @@ import ShareHeader from "@/components/shares/ShareHeader";
 import ShareBreadcrumb from "@/components/shares/ShareBreadcrumb";
 import ShareFooter from "@/components/shares/ShareFooter";
 import ShareError from "@/components/shares/ShareError";
-import FileGrid from "@/components/files/FileGrid";
-import FileList from "@/components/files/FileList";
+import ShareFileGrid from "@/components/shares/ShareFileGrid";
+import ShareFileList from "@/components/shares/ShareFileList";
 
 type Items = { files: FileInfo[]; folders: FileInfo[] };
 
@@ -124,9 +124,9 @@ function ShareViewerInner({ hash, location }: { hash: string; location: ReturnTy
                     This folder is empty.
                   </div>
                 ) : viewMode === "list" ? (
-                  <FileList items={allItems} onNavigate={handleNavigate} />
+                  <ShareFileList items={allItems} hash={hash} currentPath={rawPath} onNavigate={handleNavigate} />
                 ) : (
-                  <FileGrid items={allItems} onNavigate={handleNavigate} />
+                  <ShareFileGrid items={allItems} hash={hash} currentPath={rawPath} onNavigate={handleNavigate} />
                 )}
               </div>
             </div>
