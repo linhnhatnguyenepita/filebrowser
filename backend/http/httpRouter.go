@@ -125,6 +125,11 @@ func StartHttp(ctx context.Context, storage *bolt.BoltStore, shutdownComplete ch
 	api.HandleFunc("GET /settings/sources", withUser(getSourceInfoHandler))
 
 	// ========================================
+	// Storage Routes - /api/storage/
+	// ========================================
+	api.HandleFunc("GET /storage", withUser(handleStorage))
+
+	// ========================================
 	// Tools Routes - /api/tools/
 	// ========================================
 	api.HandleFunc("GET /tools/search", withUser(searchHandler))

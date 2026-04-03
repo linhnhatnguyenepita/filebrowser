@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LogOut, ChevronDown, Settings2 } from "lucide-react";
 import { useAuthStore } from "@/lib/stores/auth-store";
 import SettingsDialog from "./SettingsDialog";
+import { getStorage } from "@/lib/api/storage";
+import { formatBytes } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,6 +16,16 @@ export default function SidebarFooter() {
   const { logout, user } = useAuthStore();
   const [loggingOut, setLoggingOut] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [storage, setStorage] = useState<{ total: number; free: number } | null>(null);
+
+  useEffect(() => {
+    getStorage()
+      .then(setStorage)
+      .catch(() => {});
+  }, []);
+
+  const used = storage ? storage.total - storage.free : null;
+  const pct = storage ? Math.round((used / storage.total) * 100) : null;
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -34,10 +46,19 @@ export default function SidebarFooter() {
         <div className="px-4 py-3" style={{ borderBottom: "1px solid var(--border)" }}>
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-medium text-muted-foreground">Storage</span>
-            <span className="text-xs text-muted-foreground font-mono">3.4 MB / 100 GB</span>
+            {storage ? (
+              <span className="text-xs text-muted-foreground font-mono">
+                {formatBytes(used)} / {formatBytes(storage.total)}
+              </span>
+            ) : null}
           </div>
           <div className="h-1 overflow-hidden rounded-full bg-secondary">
-            <div className="h-full w-[1%] rounded-full bg-primary" />
+            {pct !== null && (
+              <div
+                className="h-full rounded-full bg-primary"
+                style={{ width: `${Math.min(pct, 100)}%` }}
+              />
+            )}
           </div>
         </div>
 
