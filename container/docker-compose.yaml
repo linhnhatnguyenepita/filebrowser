@@ -17,15 +17,10 @@ services:
 
   frontend:
     build:
-      context: ../frontend
-      dockerfile: ../container/Dockerfile.frontend
+      context: ../
+      dockerfile: container/Dockerfile.frontend
     ports:
-      - "5173:5173"
-    environment:
-      - VITE_BACKEND_URL=http://backend:8080
-    volumes:
-      - ../frontend/src:/app/src
-      - ../frontend/public:/app/public
+      - "5173:80"
     depends_on:
       - backend
     restart: unless-stopped
