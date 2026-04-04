@@ -10,12 +10,21 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
     },
   },
-  base: "",
+  base: "/",
   server: {
     port: 5173,
     allowedHosts: ["file.nlnguyen.fr"],
     proxy: {
       "/api": {
+        target: process.env.VITE_BACKEND_URL || "http://localhost:8080",
+        changeOrigin: true,
+        configure: (proxy) => {
+          proxy.on("proxyReq", (proxyReq, req) => {
+            proxyReq.setHeader("X-Forwarded-Host", req.headers.host || "localhost:5173");
+          });
+        },
+      },
+      "/public": {
         target: process.env.VITE_BACKEND_URL || "http://localhost:8080",
         changeOrigin: true,
         configure: (proxy) => {
