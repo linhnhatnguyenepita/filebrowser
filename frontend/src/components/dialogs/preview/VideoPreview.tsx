@@ -6,9 +6,10 @@ import VideoPlayer from "@/components/player/createVideoPlayer";
 
 interface VideoPreviewProps {
   file: FileInfo;
+  downloadUrl?: string;
 }
 
-export default function VideoPreview({ file }: VideoPreviewProps) {
+export default function VideoPreview({ file, downloadUrl }: VideoPreviewProps) {
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,9 +21,11 @@ export default function VideoPreview({ file }: VideoPreviewProps) {
     setError(null);
     setBlobUrl(null);
 
-    const url = getDownloadURL(file.source ?? "default", file.path);
+    const url = downloadUrl ?? getDownloadURL(file.source ?? "default", file.path);
 
-    fetch(url, { credentials: "same-origin", headers: getAuthHeader() })
+    const opts: RequestInit = { credentials: "same-origin" };
+    if (!downloadUrl) opts.headers = getAuthHeader();
+    fetch(url, opts)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.blob();
@@ -43,7 +46,7 @@ export default function VideoPreview({ file }: VideoPreviewProps) {
       revoked = true;
       if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
     };
-  }, [file]);
+  }, [file, downloadUrl]);
 
   if (error) {
     return (

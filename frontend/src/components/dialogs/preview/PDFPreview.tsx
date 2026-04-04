@@ -6,9 +6,10 @@ import { getAuthHeader } from "@/lib/api/client";
 
 interface PDFPreviewProps {
   file: FileInfo;
+  downloadUrl?: string;
 }
 
-export default function PDFPreview({ file }: PDFPreviewProps) {
+export default function PDFPreview({ file, downloadUrl }: PDFPreviewProps) {
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,9 +21,11 @@ export default function PDFPreview({ file }: PDFPreviewProps) {
     setError(null);
     setBlobUrl(null);
 
-    const url = getDownloadURL(file.source ?? "default", file.path);
+    const url = downloadUrl ?? getDownloadURL(file.source ?? "default", file.path);
 
-    fetch(url, { credentials: "same-origin", headers: getAuthHeader() })
+    const opts: RequestInit = { credentials: "same-origin" };
+    if (!downloadUrl) opts.headers = getAuthHeader();
+    fetch(url, opts)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.blob();
@@ -43,7 +46,7 @@ export default function PDFPreview({ file }: PDFPreviewProps) {
       revoked = true;
       if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
     };
-  }, [file]);
+  }, [file, downloadUrl]);
 
   if (loading) {
     return (
@@ -58,7 +61,7 @@ export default function PDFPreview({ file }: PDFPreviewProps) {
       <div className="flex flex-col items-center justify-center h-64 gap-2 text-destructive">
         <span>{error}</span>
         <a
-          href={getDownloadURL(file.source ?? "default", file.path)}
+          href={downloadUrl ?? getDownloadURL(file.source ?? "default", file.path)}
           download={file.name}
           className="text-sm text-primary hover:underline"
         >

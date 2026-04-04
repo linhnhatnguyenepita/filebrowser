@@ -8,6 +8,7 @@ import AudioPlayer from "@/components/player/createAudioPlayer";
 
 interface AudioPreviewProps {
   file: FileInfo;
+  downloadUrl?: string;
 }
 
 function stripExtension(name: string): string {
@@ -15,7 +16,7 @@ function stripExtension(name: string): string {
   return lastDot > 0 ? name.slice(0, lastDot) : name;
 }
 
-export default function AudioPreview({ file }: AudioPreviewProps) {
+export default function AudioPreview({ file, downloadUrl }: AudioPreviewProps) {
   const [blobUrl, setBlobUrl] = useState<string | null>(null);
   const [albumArt, setAlbumArt] = useState<string | null>(null);
   const [trackTitle, setTrackTitle] = useState(stripExtension(file.name));
@@ -42,8 +43,10 @@ export default function AudioPreview({ file }: AudioPreviewProps) {
       });
 
     // Fetch audio blob
-    const url = getDownloadURL(source, file.path);
-    fetch(url, { credentials: "same-origin", headers: getAuthHeader() })
+    const url = downloadUrl ?? getDownloadURL(source, file.path);
+    const opts: RequestInit = { credentials: "same-origin" };
+    if (!downloadUrl) opts.headers = getAuthHeader();
+    fetch(url, opts)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.blob();
@@ -62,7 +65,7 @@ export default function AudioPreview({ file }: AudioPreviewProps) {
     return () => {
       revoked = true;
     };
-  }, [file]);
+  }, [file, downloadUrl]);
 
   if (error) {
     return (

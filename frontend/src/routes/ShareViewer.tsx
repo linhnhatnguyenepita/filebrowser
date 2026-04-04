@@ -1,6 +1,6 @@
 // frontend/src/routes/ShareViewer.tsx
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import type { ShareInfo } from "@/lib/types/share-viewer";
 import { getShareItems } from "@/lib/api/share-viewer";
@@ -12,6 +12,7 @@ import ShareFooter from "@/components/shares/ShareFooter";
 import ShareError from "@/components/shares/ShareError";
 import ShareFileGrid from "@/components/shares/ShareFileGrid";
 import ShareFileList from "@/components/shares/ShareFileList";
+import SharePreview from "@/components/shares/SharePreview";
 
 type Items = { files: FileInfo[]; folders: FileInfo[] };
 
@@ -40,28 +41,6 @@ function ShareViewerInner({ hash, location }: { hash: string; location: ReturnTy
   const [itemsError, setItemsError] = useState<{ status: number; message: string } | null>(null);
   const [itemsLoading, setItemsLoading] = useState(true);
 
-  const fetchItems = useCallback(async (path: string) => {
-    setItemsLoading(true);
-    setItemsError(null);
-    try {
-      const data = await getShareItems(hash, path);
-      setItems(data);
-    } catch (err: unknown) {
-      if (err && typeof err === "object" && "status" in err) {
-        setItemsError(err as { status: number; message: string });
-      } else {
-        setItemsError({ status: 0, message: "Could not load files. Please check your connection." });
-      }
-      setItems(null);
-    } finally {
-      setItemsLoading(false);
-    }
-  }, [hash]);
-
-  useEffect(() => {
-    fetchItems(rawPath);
-  }, [fetchItems, rawPath]);
-
   const handleNavigate = useCallback(
     (path: string) => {
       navigate(buildSharePath(hash, path));
@@ -69,24 +48,72 @@ function ShareViewerInner({ hash, location }: { hash: string; location: ReturnTy
     [navigate, hash]
   );
 
-  if (itemsError) {
-    if (itemsError.status === 403) {
-      return <ShareError title="Folder not found" description="This folder does not exist." />;
-    }
-    if (itemsError.status === 0) {
-      return <ShareError title="Connection error" description={itemsError.message} />;
-    }
-  }
-
   return (
     <ShareInfoLoader hash={hash}>
       {(info: ShareInfo) => {
+        // Fetch items inside ShareInfoLoader so we can access info.sourceURL to detect single-file shares.
+        // Single-file shares cause the /resources/items endpoint to return a 500, so we detect them here
+        // and skip the call — sourceFile below handles rendering the file preview.
+        if (items === null && !itemsError) {
+          if (rawPath === "/" && info.sourceURL && !info.sourceURL.endsWith("/")) {
+            // Single-file share: skip the endpoint call, set empty items so sourceFile activates
+            setItems({ files: [], folders: [] });
+            setItemsLoading(false);
+          } else {
+            getShareItems(hash, rawPath)
+              .then(data => {
+                setItems(data);
+                setItemsLoading(false);
+              })
+              .catch((err: unknown) => {
+                if (err && typeof err === "object" && "status" in err) {
+                  setItemsError(err as { status: number; message: string });
+                } else {
+                  setItemsError({ status: 0, message: "Could not load files. Please check your connection." });
+                }
+                setItems(null);
+                setItemsLoading(false);
+              });
+          }
+        }
+
         // compact/normal/gallery all map to grid; only "list" uses the list layout
         const viewMode = info.viewMode === "list" ? "list" : "grid";
         const allItems: FileInfo[] = [
           ...(items?.folders ?? []).filter(f => info.showHidden || !f.hidden),
           ...(items?.files ?? []).filter(f => info.showHidden || !f.hidden),
         ];
+
+        // Single-file share: items returned empty but sourceURL points to a file (not a directory)
+        // When sharing a single file, the items endpoint returns {}, and the file path lives in info.sourceURL
+        const sourceIsFile =
+          items !== null &&
+          !itemsLoading &&
+          (items?.files ?? []).length === 0 &&
+          (items?.folders ?? []).length === 0 &&
+          !!info.sourceURL &&
+          !info.sourceURL.endsWith("/");
+
+        const singleFile =
+          !sourceIsFile &&
+          rawPath === "/" &&
+          allItems.length === 1 &&
+          (items?.folders ?? []).length === 0;
+
+// Build a synthetic FileInfo from share info when sourceURL points to a file
+const sourceFile: FileInfo | null = sourceIsFile
+  ? {
+      name: info.sourceURL.split("/").pop() ?? info.sourceURL,
+      size: 0,
+      modified: "",
+      type: info.sourceURL.split(".").pop()?.toLowerCase() ?? "octet-stream",
+      hidden: false,
+      hasPreview: false,
+              isShared: false,
+              path: info.sourceURL,
+              source: "",
+            }
+          : null;
 
         return (
           <div className="min-h-screen bg-background flex flex-col">
@@ -101,13 +128,22 @@ function ShareViewerInner({ hash, location }: { hash: string; location: ReturnTy
 
             <div className="flex-1 px-6 pb-6">
               <div className="max-w-5xl mx-auto">
-                {itemsLoading ? (
+                {itemsError ? (
+                  <ShareError
+                    title="Error loading files"
+                    description={itemsError.status > 0 ? itemsError.message : itemsError.message}
+                  />
+                ) : itemsLoading ? (
                   <div className="flex items-center justify-center h-48 text-muted-foreground">
                     <div className="flex flex-col items-center gap-3">
                       <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
                       <span className="text-sm">Loading files…</span>
                     </div>
                   </div>
+                ) : singleFile && allItems.length === 1 ? (
+                  <SharePreview file={allItems[0]} hash={hash} />
+                ) : sourceFile ? (
+                  <SharePreview file={sourceFile} hash={hash} />
                 ) : allItems.length === 0 ? (
                   <div className="flex items-center justify-center h-48 text-muted-foreground text-sm">
                     This folder is empty.

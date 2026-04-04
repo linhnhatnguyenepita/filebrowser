@@ -55,9 +55,39 @@ export async function getShareItems(
     } catch { /* keep statusText */ }
     throw err;
   }
-  return res.json();
+
+  // Backend returns { files: string[], folders: string[], folderCounts?: Record<string, number> }
+  // Frontend expects { files: FileInfo[], folders: FileInfo[] }
+  // Transform the string arrays into FileInfo objects
+  const raw: { files: string[]; folders: string[]; folderCounts?: Record<string, number> } = await res.json();
+
+  return {
+    files: (raw.files ?? []).map((name: string): FileInfo => ({
+      name,
+      size: 0,
+      modified: "",
+      type: "application/octet-stream",
+      hidden: false,
+      hasPreview: false,
+      isShared: false,
+      path: "/" + name,
+      source: "",
+    })),
+    folders: (raw.folders ?? []).map((name: string): FileInfo => ({
+      name,
+      size: 0,
+      modified: "",
+      type: "directory",
+      hidden: false,
+      hasPreview: false,
+      isShared: false,
+      path: "/" + name,
+      source: "",
+      count: raw.folderCounts?.[name] ?? 0,
+    })),
+  };
 }
 
-export function getShareDownloadURL(hash: string, path: string): string {
-  return publicPath("resources/download", { hash, path });
+export function getShareDownloadURL(hash: string, filePath: string): string {
+  return publicPath("resources/download", { hash, file: filePath });
 }

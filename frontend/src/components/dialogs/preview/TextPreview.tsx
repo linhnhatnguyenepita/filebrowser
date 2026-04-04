@@ -6,11 +6,12 @@ import { getAuthHeader } from "@/lib/api/client";
 
 interface TextPreviewProps {
   file: FileInfo;
+  downloadUrl?: string;
 }
 
 const MAX_TEXT_SIZE = 1024 * 1024; // 1MB
 
-export default function TextPreview({ file }: TextPreviewProps) {
+export default function TextPreview({ file, downloadUrl }: TextPreviewProps) {
   const [content, setContent] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -29,9 +30,11 @@ export default function TextPreview({ file }: TextPreviewProps) {
       return;
     }
 
-    const url = getDownloadURL(file.source ?? "default", file.path);
+    const url = downloadUrl ?? getDownloadURL(file.source ?? "default", file.path);
 
-    fetch(url, { credentials: "same-origin", headers: getAuthHeader() })
+    const opts: RequestInit = { credentials: "same-origin" };
+    if (!downloadUrl) opts.headers = getAuthHeader();
+    fetch(url, opts)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.text();
@@ -55,7 +58,7 @@ export default function TextPreview({ file }: TextPreviewProps) {
     return () => {
       cancelled = true;
     };
-  }, [file]);
+  }, [file, downloadUrl]);
 
   if (loading) {
     return (
@@ -70,7 +73,7 @@ export default function TextPreview({ file }: TextPreviewProps) {
       <div className="flex flex-col items-center justify-center h-64 gap-2 text-destructive">
         <span>{error}</span>
         <a
-          href={getDownloadURL(file.source ?? "default", file.path)}
+          href={downloadUrl ?? getDownloadURL(file.source ?? "default", file.path)}
           download={file.name}
           className="text-sm text-primary hover:underline"
         >
@@ -88,7 +91,7 @@ export default function TextPreview({ file }: TextPreviewProps) {
         <div className="px-3 py-1.5 bg-amber-500/10 text-amber-500 text-sm border-b border-amber-500/20">
           File truncated at 1MB.{" "}
           <a
-            href={getDownloadURL(file.source ?? "default", file.path)}
+            href={downloadUrl ?? getDownloadURL(file.source ?? "default", file.path)}
             download={file.name}
             className="underline hover:opacity-80"
           >
